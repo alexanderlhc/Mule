@@ -1,0 +1,76 @@
+\documentclass{report}
+\usepackage[utf8]{inputenc}                         % unicode
+\usepackage[english]{babel}                         % correct typeset
+\usepackage[paper=a4paper,margin=3.0cm]{geometry}   % margins
+\usepackage{fancyhdr}                               % header
+\usepackage{lastpage}                               % last page
+\usepackage[ddmmyyyy]{datetime}                     % date
+
+%%% styles
+\usepackage{titlesec}
+\titleformat{\chapter}[hang]
+{\normalfont\Large\bfseries}{\chaptertitlename\ \thechapter:}{1em}{}
+
+%%%%% code
+\usepackage{pgffor}
+%\usepackage{listings}
+\usepackage{listingsutf8}
+\lstset{inputencoding=utf8/latin1}
+\usepackage{color}
+\UseRawInputEncoding
+\setlength{\headheight}{1cm}
+
+
+%%%% java
+\definecolor{javared}{rgb}{0.6,0,0} % for strings
+\definecolor{javagreen}{rgb}{0.25,0.5,0.35} % comments
+\definecolor{javapurple}{rgb}{0.5,0,0.35} % keywords
+\definecolor{javadocblue}{rgb}{0.25,0.35,0.75} % javadoc
+
+\lstset{language=Java,
+basicstyle=\ttfamily,
+keywordstyle=\color{javapurple}\bfseries,
+stringstyle=\color{javared},
+commentstyle=\color{javagreen},
+morecomment=[s][\color{javadocblue}]{/**}{*/},
+numbers=left,
+numberstyle=\tiny\color{black},
+stepnumber=2,
+numbersep=10pt,
+tabsize=4,
+showspaces=false,
+breaklines=true,
+showstringspaces=false
+extendedchars=true,
+literate=
+    {æ}{{\ae}}1
+    {Æ}{{\AE}}1
+    {ø}{{\o}}1
+    {Ø}{{\O}}1
+    {å}{{\r a}}1
+    {Å}{{\r A}}1
+}
+
+
+%%%%% header
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{}
+\rhead{Page \thepage \hspace{1pt} of \pageref{LastPage}}
+
+%%%%% title
+% set through properties.tex (controlled by java)
+\date{ \today }
+
+\input{../tmp/properties}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\newpage
+
+\newgeometry{top=3cm,bottom=2cm,right=0.5cm,left=1cm}
+\input{../tmp/code}
+
+\end{document}
