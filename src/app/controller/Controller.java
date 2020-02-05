@@ -53,9 +53,6 @@ public class Controller implements Initializable {
 	private Button btnRun;
 
 
-	public Controller() throws URISyntaxException {
-	}
-
 	/**
 	 * Initializes the listeners used for live validation
 	 */
