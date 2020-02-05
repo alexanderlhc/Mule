@@ -1,7 +1,6 @@
 package app.controller;
 
 import java.io.File;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -17,6 +16,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ListView;
@@ -48,19 +48,16 @@ public class Controller implements Initializable {
 	private CheckBox cbLangSql;
 	@FXML
 	private TextArea txaLog;
+	@FXML
+	private Button btnRun;
 
-
-	public Controller() throws URISyntaxException {
-
-
-	}
 
 	/**
 	 * Initializes the listeners used for live validation
 	 */
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-
+		
 		txfAuthor.textProperty().addListener((obs, oldText, newText) -> {
 		    checkAuthorIsOK();
 		});
@@ -83,28 +80,39 @@ public class Controller implements Initializable {
 			                   Boolean old_val, Boolean new_val) {
 			                   checkLanguagesIsOK();		
 			                   setLwSourceFiles(txfCodeDir.getText());
-			                }
+			           }
               });
 			}
 		}
 	}
 		
 	
+	/**
+	 * Creates report from users input:
+	 * 	- if all fields are valid
+	 * 	- or shows an error message
+	 */
 	@FXML
 	private void createReport() {
-		if (canGenerateReport()) {
-			dialogConfirmCompile();
+		if (canGenerateReport() ) {
+			if(dialogConfirmCompile()) { // user accepts
+				compileToPdf();
+				btnRun.setDisable(true);		
+			}
 		} else {
 			Alert alert = new Alert(AlertType.ERROR);
 			alert.setTitle("Error");
 			alert.setHeaderText("Something prevents me from running");
-			alert.setContentText("aaand, I don't know why?!\n"
-					+ "Try again.");
-
+			alert.setContentText("Are all input fields green?\n"
+					+ "If yes, try to close and open again.\n"
+					+ "I sometimes behave weirdly.");
 			alert.showAndWait();
 		}
 	}
 
+	/**
+	 * Chooses directory where source code is located
+	 */
 	@FXML
 	private void chooseDirectory() {
 		DirectoryChooser directoryChooser = new DirectoryChooser();
@@ -124,6 +132,9 @@ public class Controller implements Initializable {
 		txfCodeDir.setText(path);
 	}
 
+	/**
+	 * Choose location and name for the resulting report (PDF).
+	 */
 	@FXML
 	private void chooseSave() {
 		String path = "";
@@ -142,7 +153,13 @@ public class Controller implements Initializable {
 		txfTargetFile.setText(path);
 	}
 
-	private void dialogConfirmCompile() {
+	/**
+	 * Confirmation dialog asking user to start compiling report or not
+	 * @return users answer, ok = true.
+	 */
+	private boolean dialogConfirmCompile() {
+		boolean confirmation = false;
+		
 		Alert alert = new Alert(AlertType.CONFIRMATION);
 		alert.setTitle("Ready to compile?");
 		alert.setHeaderText("Want to compile? Application might FREEZE!");
@@ -150,19 +167,44 @@ public class Controller implements Initializable {
 
 		Optional<ButtonType> result = alert.showAndWait();
 		if (result.get() == ButtonType.OK){   
-//			// TODO: why read vars twice and set this again?
-			ArrayList<String> files = removeUnwantedFiles(getSrcFilesPaths(txfCodeDir.getText()), getFiletypes());
-			LatexProcessor lp = new LatexProcessor(txfTitle.getText(), txfAuthor.getText(), files, languagesSelected());
-			String exportFile = txfTargetFile.getText();
-			if (getFileExtension(exportFile).equals("")) {
-				exportFile = exportFile + ".pdf";
-			}
-			txaLog.setText(lp.compile(exportFile));
-			
+			confirmation = true;
 		} 
+		return confirmation;
 	}
+	
 	// -------------------- Helpers -----------------
 
+	/**
+	 * Starts the chain of calls, thus beginning the compilation of the code.
+	 * Also updates the log area with "useful" information about the process.
+	 */
+	private void compileToPdf() {
+		ArrayList<String> files = removeUnwantedFiles(getSrcFilesPaths(txfCodeDir.getText()), getFiletypes());
+		LatexProcessor lp = new LatexProcessor(sanitizeString(txfTitle.getText()), sanitizeString(txfAuthor.getText()), files, languagesSelected());
+		String exportFile = txfTargetFile.getText();
+		if (getFileExtension(exportFile).equals("")) {
+			exportFile = exportFile + ".pdf";
+		}
+		txaLog.setText(lp.compile(exportFile));
+	}
+	
+	/**
+	 * Sanitizes string escaping unwanted TeX characters
+	 * 
+	 * @param s string to check
+	 * @return string with unwanted characters escaped
+	 */
+	private String sanitizeString(String s) {
+		return s.replaceAll("\\\\", "\\\\textbackslash")    // \ 
+		.replaceAll("([&%$#_{}])", "\\\\$1")	    // &%$#_{}
+		.replaceAll("~", "\\\\textasciitilde")		// ~
+		.replaceAll("\\^", "\\\\textasciicircum");	// for ^	
+	}
+	
+	/**
+	 * Gets a list of (selected) programming languages.
+	 * @return list of (enum) languages.
+	 */
 	private ArrayList<Language> languagesSelected(){
 		ArrayList<Language> languages = new ArrayList<>();
 		
@@ -177,6 +219,7 @@ public class Controller implements Initializable {
 		}
 		return languages;
 	}
+	
 	/**
 	 * Precondition: path is a valid directory Sets the ListView with all files with
 	 * selected filetypes within path
@@ -277,6 +320,17 @@ public class Controller implements Initializable {
 	private boolean isFileAccepted(String file, ArrayList<String> filetypes) {
 		return filetypes.contains(getFileExtension(file));
 	}
+	
+	/**
+	 * Clears style for Node and applying new.
+	 * Useful for clearing status (error,success) and setting new
+	 * @param node to update
+	 * @param css class style 
+	 */
+	private void setStyleClass(Node n, String newStyle) {
+		n.getStyleClass().clear();
+		n.getStyleClass().add(newStyle);
+	}
 	// -------------------- Checks -----------------
 
 	/**
@@ -288,17 +342,16 @@ public class Controller implements Initializable {
 	private boolean canGenerateReport() {
 		boolean hasError = false;
 
-		if (!checkAuthorIsOK() && !checkTitleIsOK() && !checkCodeDirIsOK() && !checkTargetIsOK() && !checkLanguagesIsOK()) {
+		if (!checkAuthorIsOK() || !checkTitleIsOK() || !checkCodeDirIsOK() || !checkTargetIsOK() || !checkLanguagesIsOK()) {
 			hasError = true;
 		}
 		return !hasError;
 	}
 
-
 	private boolean checkAuthorIsOK() {
 		boolean valid = false;
 
-		if (checkString(txfAuthor.getText())) {
+		if (txfAuthor.getText().length() > 0) {
 			valid = true;
 			setStyleClass(txfAuthor, "success");
 		} else {
@@ -306,12 +359,11 @@ public class Controller implements Initializable {
 		}
 		return valid;
 	}
-	
 
 	private boolean checkTitleIsOK() {
 		boolean valid = false;
 
-		if (checkString(txfTitle.getText())) {
+		if (txfTitle.getText().length() > 0) {
 			valid = true;
 			setStyleClass(txfTitle, "success");
 		} else {
@@ -349,8 +401,6 @@ public class Controller implements Initializable {
 	 * @return true if valid otherwise false
 	 */
 	private boolean checkLanguagesIsOK() {
-		// TODO: intended to recall getFileTypes multiple times
-		// maybe read fieldvariable.
 		boolean isValid = false;
 		if (getFiletypes().size() > 0) {
 			isValid = true;
@@ -361,22 +411,6 @@ public class Controller implements Initializable {
 		return isValid;
 	}
 	
-	private void setStyleClass(Node n, String newStyle) {
-		n.getStyleClass().clear();
-		n.getStyleClass().add(newStyle);
-	}
-
-	/**
-	 * Given string is not empty nor contains illegal characters
-	 * 
-	 * @param s the string to check
-	 * @return true if valid otherwise false
-	 */
-	private boolean checkString(String s) {
-		// TODO: Doesn't support UNICODE (æøå etc)
-		return (s.matches(".*\\W+.*") || s.length() == 0) ? false : true;
-	}
-
 	/**
 	 * Directory is in fact a directory and is readable and writable.
 	 * 
@@ -387,10 +421,5 @@ public class Controller implements Initializable {
 		File f = new File(path);
 		return (f.isDirectory() && f.canRead() && f.canWrite()) ? true : false;
 	}
-
-
-
-
-
 
 }
