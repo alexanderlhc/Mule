@@ -91,11 +91,18 @@ public class Controller implements Initializable {
 	}
 		
 	
+	/**
+	 * Creates report from users input:
+	 * 	- if all fields are valid
+	 * 	- or shows an error message
+	 */
 	@FXML
 	private void createReport() {
-		if (canGenerateReport()) {
-			dialogConfirmCompile();
-			btnRun.setDisable(true);
+		if (canGenerateReport() ) {
+			if(dialogConfirmCompile()) { // user accepts
+				compileToPdf();
+				btnRun.setDisable(true);		
+			}
 		} else {
 			Alert alert = new Alert(AlertType.ERROR);
 			alert.setTitle("Error");
@@ -103,11 +110,13 @@ public class Controller implements Initializable {
 			alert.setContentText("Are all input fields green?\n"
 					+ "If yes, try to close and open again.\n"
 					+ "I sometimes behave weirdly.");
-
 			alert.showAndWait();
 		}
 	}
 
+	/**
+	 * Chooses directory where source code is located
+	 */
 	@FXML
 	private void chooseDirectory() {
 		DirectoryChooser directoryChooser = new DirectoryChooser();
@@ -127,6 +136,9 @@ public class Controller implements Initializable {
 		txfCodeDir.setText(path);
 	}
 
+	/**
+	 * Choose location and name for the resulting report (PDF).
+	 */
 	@FXML
 	private void chooseSave() {
 		String path = "";
@@ -145,7 +157,9 @@ public class Controller implements Initializable {
 		txfTargetFile.setText(path);
 	}
 
-	private void dialogConfirmCompile() {
+	private boolean dialogConfirmCompile() {
+		boolean confirmation = false;
+		
 		Alert alert = new Alert(AlertType.CONFIRMATION);
 		alert.setTitle("Ready to compile?");
 		alert.setHeaderText("Want to compile? Application might FREEZE!");
@@ -153,8 +167,9 @@ public class Controller implements Initializable {
 
 		Optional<ButtonType> result = alert.showAndWait();
 		if (result.get() == ButtonType.OK){   
-			compileToPdf();			
+			confirmation = true;
 		} 
+		return confirmation;
 	}
 	// -------------------- Helpers -----------------
 
