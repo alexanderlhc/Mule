@@ -4,7 +4,7 @@
 
 ### Windows
 
-Download the `Mule-windows.zip` file. 
+Download the `Mule-windows.zip` file [here](https://github.com/alexanderlhc/Mule/releases)
 The size is large because it must carry the texLive compiler.
 
 * Extract zip
@@ -15,7 +15,7 @@ The size is large because it must carry the texLive compiler.
 
 * Install latexmk [read howto here](https://mg.readthedocs.io/latexmk.html)
 * Extract zip
-* Run `Mule.jar`
+* Run `Mule.jar` [here](https://github.com/alexanderlhc/Mule/releases)
 * Rest should work out
 
 ## TODO
