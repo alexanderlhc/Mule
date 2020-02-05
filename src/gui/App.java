@@ -21,17 +21,20 @@ public class App extends Application {
 		Parent content = loader.load();
 		Scene scene = new Scene(content);
 		primaryStage.setScene(scene);
-		
-		useageInformation();	
-		
+		useageInformation();			
 		primaryStage.show();
 	}
 
+	/**
+	 * Dialog showing current state of the application (the limits).
+	 * Hopefully unnecessary soon. 
+	 */
 	private void useageInformation() {
 		Alert alert = new Alert(AlertType.INFORMATION);
 		alert.setTitle("Mule known limitations!");
 		alert.setHeaderText("Limitations:");
-		String context = String.format("* %s%n* %s%n", "Must open and close for consecutive runs", "Title and Author can't contain spaces (yet!)");
+		String context = String.format("* %s%n* %s", "Must open and close for consecutive runs",
+				"App might freeze when running");
 		alert.setContentText(context);
 		alert.showAndWait();
 	}

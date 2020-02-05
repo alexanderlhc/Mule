@@ -23,6 +23,7 @@ The size is large because it must carry the texLive compiler.
 ### Must 
 
 - [ ] Pass binary for Mac and Linux
+- [ ] Better error catching (currently TOO many printStackTrace)
 - [ ] More languages added + confirm color palette
 
 ### Cleaner code
@@ -32,7 +33,6 @@ The size is large because it must carry the texLive compiler.
 
 ### Nice to have
 
-- [ ] Better error messages (maybe popups?)
 - [ ] Update log during compile (hard: see section further down)
 
 ### Cosmetic care for GUI

@@ -29,12 +29,15 @@ public class LatexProcessor {
 			File f = new File(tmpDir);
 			f.mkdir();
 		} catch (URISyntaxException e) {
-			// TODO Better catch!
 			e.printStackTrace();
 		}
 
 	}
 
+	/**
+	 * Builds a chapter for each selected language
+	 * @return the string (LaTeX compatible) containing all code.
+	 */
 	private String latexForAllLanguages() {
 		StringBuilder sb = new StringBuilder();
 		for (Language language : languages) {
@@ -56,7 +59,6 @@ public class LatexProcessor {
 			
 			for (String path : files) {
 				File f = new File(path);
-				// if f.fileExtension is in 
 				String filetype = Controller.getFileExtension(f.getName()).substring(1);
 				if (language.getFiletypes().contains(filetype)) {
 					sb.append(String.format("\\section{%s}%n", f.getName()));
@@ -84,19 +86,19 @@ public class LatexProcessor {
 	}
 	
 	/**
-	 * Writes the temporary TeX file that ultimately are turned into LaTeX
+	 * Writes the temporary TeX files from templates,
+	 * are target for compiler and thus turned into PDF
+	 * these files should be deleted since placed in tmp dir.
 	 */
 	private void writeTexFiles(){
 		try (PrintWriter writer = new PrintWriter(tmpDir + File.separator + "report.tex")){
 			BufferedReader txtReader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/resources/template.tex")));
-
 			String line;
 			while ((line = txtReader.readLine()) != null) {
 				writer.println(line);
 			}
 
 		} catch (Exception e) {
-			//TODO: handle exception better!
 			e.printStackTrace();	
 		}
 		
@@ -104,18 +106,25 @@ public class LatexProcessor {
 			writer.write(latexFromReportProperties());
 			writer.write("\\newpage");
 		} catch (Exception e) {
-			//TODO: handle exception better!
 			e.printStackTrace();	
 		}
 		try (PrintWriter writer = new PrintWriter(tmpDir + File.separator + "code.tex")){
 			writer.write(latexForAllLanguages());
 		} catch (Exception e) {
-			//TODO: handle exception better!
 			e.printStackTrace();	
 		}
 	}
 	
-	public String compile(String path) {
+
+	/**
+	 * Starts the process:
+	 * 1. Write the templates out
+	 * 2. Compiles the TeX
+	 * 3. Moves the resulting PDF to target
+	 * @param pathTargetFile the location and name of the resulting file
+	 * @return the log from the compile process
+	 */
+	public String compile(String pathTargetFile) {
 		writeTexFiles();
 		Terminal term = null;
 		
@@ -125,6 +134,6 @@ public class LatexProcessor {
 			term = new TerminalUnix(tmpDir);
 		}
 		
-		return term.compileAndMove(path);
+		return term.compileAndMove(pathTargetFile);
 	}
 }
