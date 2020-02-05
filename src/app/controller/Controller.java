@@ -179,7 +179,8 @@ public class Controller implements Initializable {
 	// -------------------- Helpers -----------------
 
 	/**
-	 * 
+	 * Starts the chain of calls, thus beginning the compilation of the code.
+	 * Also updates the log area with "useful" information about the process.
 	 */
 	private void compileToPdf() {
 		ArrayList<String> files = removeUnwantedFiles(getSrcFilesPaths(txfCodeDir.getText()), getFiletypes());
@@ -204,7 +205,10 @@ public class Controller implements Initializable {
 		.replaceAll("\\^", "\\\\textasciicircum");	// for ^	
 	}
 	
-	
+	/**
+	 * Gets a list of (selected) programming languages.
+	 * @return list of (enum) languages.
+	 */
 	private ArrayList<Language> languagesSelected(){
 		ArrayList<Language> languages = new ArrayList<>();
 		
@@ -219,6 +223,7 @@ public class Controller implements Initializable {
 		}
 		return languages;
 	}
+	
 	/**
 	 * Precondition: path is a valid directory Sets the ListView with all files with
 	 * selected filetypes within path
@@ -320,6 +325,16 @@ public class Controller implements Initializable {
 		return filetypes.contains(getFileExtension(file));
 	}
 	
+	/**
+	 * Clears style for Node and applying new.
+	 * Useful for clearing status (error,success) and setting new
+	 * @param node to update
+	 * @param css class style 
+	 */
+	private void setStyleClass(Node n, String newStyle) {
+		n.getStyleClass().clear();
+		n.getStyleClass().add(newStyle);
+	}
 	// -------------------- Checks -----------------
 
 	/**
@@ -337,7 +352,6 @@ public class Controller implements Initializable {
 		return !hasError;
 	}
 
-
 	private boolean checkAuthorIsOK() {
 		boolean valid = false;
 
@@ -349,7 +363,6 @@ public class Controller implements Initializable {
 		}
 		return valid;
 	}
-	
 
 	private boolean checkTitleIsOK() {
 		boolean valid = false;
@@ -392,8 +405,6 @@ public class Controller implements Initializable {
 	 * @return true if valid otherwise false
 	 */
 	private boolean checkLanguagesIsOK() {
-		// TODO: intended to recall getFileTypes multiple times
-		// maybe read fieldvariable.
 		boolean isValid = false;
 		if (getFiletypes().size() > 0) {
 			isValid = true;
@@ -404,14 +415,6 @@ public class Controller implements Initializable {
 		return isValid;
 	}
 	
-	private void setStyleClass(Node n, String newStyle) {
-		n.getStyleClass().clear();
-		n.getStyleClass().add(newStyle);
-	}
-
-
-
-
 	/**
 	 * Directory is in fact a directory and is readable and writable.
 	 * 
@@ -422,10 +425,5 @@ public class Controller implements Initializable {
 		File f = new File(path);
 		return (f.isDirectory() && f.canRead() && f.canWrite()) ? true : false;
 	}
-
-
-
-
-
 
 }
