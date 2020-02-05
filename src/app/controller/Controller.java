@@ -17,6 +17,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ListView;
@@ -48,11 +49,11 @@ public class Controller implements Initializable {
 	private CheckBox cbLangSql;
 	@FXML
 	private TextArea txaLog;
+	@FXML
+	private Button btnRun;
 
 
 	public Controller() throws URISyntaxException {
-
-
 	}
 
 	/**
@@ -60,7 +61,7 @@ public class Controller implements Initializable {
 	 */
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-
+		
 		txfAuthor.textProperty().addListener((obs, oldText, newText) -> {
 		    checkAuthorIsOK();
 		});
@@ -94,12 +95,14 @@ public class Controller implements Initializable {
 	private void createReport() {
 		if (canGenerateReport()) {
 			dialogConfirmCompile();
+			btnRun.setDisable(true);
 		} else {
 			Alert alert = new Alert(AlertType.ERROR);
 			alert.setTitle("Error");
 			alert.setHeaderText("Something prevents me from running");
-			alert.setContentText("aaand, I don't know why?!\n"
-					+ "Try again.");
+			alert.setContentText("Are all input fields green?\n"
+					+ "If yes, try to close and open again.\n"
+					+ "I sometimes behave weirdly.");
 
 			alert.showAndWait();
 		}
@@ -306,7 +309,7 @@ public class Controller implements Initializable {
 	private boolean canGenerateReport() {
 		boolean hasError = false;
 
-		if (!checkAuthorIsOK() && !checkTitleIsOK() && !checkCodeDirIsOK() && !checkTargetIsOK() && !checkLanguagesIsOK()) {
+		if (!checkAuthorIsOK() || !checkTitleIsOK() || !checkCodeDirIsOK() || !checkTargetIsOK() || !checkLanguagesIsOK()) {
 			hasError = true;
 		}
 		return !hasError;
