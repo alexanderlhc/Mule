@@ -21,7 +21,7 @@ The size is large because it must carry the texLive compiler.
 ## TODO
 
 - [ ] Paths are an absolutle mess. Get it sorted!
-- [ ] Better UNICODE support + author and title must be allowed spaces.
+- [x] Better UNICODE support + author and title must be allowed spaces.
 - [ ] Update log during compile (hard: see section further down)
 - [ ] More languages added + confirm color palette
 - [ ] Pass binary for Mac and Linux
