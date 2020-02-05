@@ -157,6 +157,10 @@ public class Controller implements Initializable {
 		txfTargetFile.setText(path);
 	}
 
+	/**
+	 * Confirmation dialog asking user to start compiling report or not
+	 * @return users answer, ok = true.
+	 */
 	private boolean dialogConfirmCompile() {
 		boolean confirmation = false;
 		
@@ -171,10 +175,13 @@ public class Controller implements Initializable {
 		} 
 		return confirmation;
 	}
+	
 	// -------------------- Helpers -----------------
 
+	/**
+	 * 
+	 */
 	private void compileToPdf() {
-		// TODO: why read vars twice and set this again?
 		ArrayList<String> files = removeUnwantedFiles(getSrcFilesPaths(txfCodeDir.getText()), getFiletypes());
 		LatexProcessor lp = new LatexProcessor(sanitizeString(txfTitle.getText()), sanitizeString(txfAuthor.getText()), files, languagesSelected());
 		String exportFile = txfTargetFile.getText();

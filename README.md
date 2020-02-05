@@ -20,23 +20,28 @@ The size is large because it must carry the texLive compiler.
 
 ## TODO
 
-- [ ] Paths are an absolutle mess. Get it sorted!
-- [x] Better UNICODE support + author and title must be allowed spaces.
-- [ ] Update log during compile (hard: see section further down)
-- [ ] More languages added + confirm color palette
+### Must 
+
 - [ ] Pass binary for Mac and Linux
+- [ ] More languages added + confirm color palette
 
-## Updating log during latex compil
+### Cleaner code
 
-* Tried passing propertyListener (with onChangeListener) and updating insde the compiler loop.
+- [ ] Paths are an absolute mess (tmpDir,WorkDir etc..), passed and reread without system now.
+- [ ] In Controller method "compileToPdf" it reads and sanitizes all files in selected directory again. Maybe just read from already sanitised ListView?
+
+### Nice to have
+
+- [ ] Better error messages (maybe popups?)
+- [ ] Update log during compile (hard: see section further down)
+
+### Cosmetic care for GUI
+
+- [ ] Clearer when fields are invalid and acceptable
+
+## Updating log during compilation
+
+* Tried passing propertyListener (with onChangeListener) and updating inside the compiler loop.
 * Passing TextArea to same loop.
 
 Both doesn't update during execution (even though System out works) and updates after.
-
-## Ideas
-
-- Options become gradually avail
-- Run becomes available when all options filled properly. Recheck (for source files) just checks if files exist in LW. 
-	- All options passing gets green
-- When terminal object "dies" then execute remove temp. on startup remove temp if exists.
-- Deal with errors/exceptions in popup. 
