@@ -1,7 +1,8 @@
 \documentclass{report}
-\usepackage[utf8]{inputenc}                         % unicode
-\usepackage[english]{babel}                         % correct typeset
-\usepackage[paper=a4paper,margin=3.0cm]{geometry}   % margins
+\usepackage[T1]{fontenc}							% unicode
+\usepackage[utf8]{inputenc}							% correct typeset
+\usepackage[english]{babel}
+ \usepackage[paper=a4paper,margin=3.0cm]{geometry}   % margins
 \usepackage{fancyhdr}                               % header
 \usepackage{lastpage}                               % last page
 \usepackage[ddmmyyyy]{datetime}                     % date
@@ -17,7 +18,6 @@
 \usepackage{listingsutf8}
 \lstset{inputencoding=utf8/latin1}
 \usepackage{color}
-\UseRawInputEncoding
 \setlength{\headheight}{1cm}
 
 
@@ -71,6 +71,7 @@ literate=
 \newpage
 
 \newgeometry{top=3cm,bottom=2cm,right=0.5cm,left=1cm}
+\UseRawInputEncoding
 \input{../tmp/code}
 
 \end{document}

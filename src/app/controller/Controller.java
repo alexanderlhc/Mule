@@ -83,7 +83,7 @@ public class Controller implements Initializable {
 			                   Boolean old_val, Boolean new_val) {
 			                   checkLanguagesIsOK();		
 			                   setLwSourceFiles(txfCodeDir.getText());
-			                }
+			           }
               });
 			}
 		}
@@ -150,19 +150,36 @@ public class Controller implements Initializable {
 
 		Optional<ButtonType> result = alert.showAndWait();
 		if (result.get() == ButtonType.OK){   
-//			// TODO: why read vars twice and set this again?
-			ArrayList<String> files = removeUnwantedFiles(getSrcFilesPaths(txfCodeDir.getText()), getFiletypes());
-			LatexProcessor lp = new LatexProcessor(txfTitle.getText(), txfAuthor.getText(), files, languagesSelected());
-			String exportFile = txfTargetFile.getText();
-			if (getFileExtension(exportFile).equals("")) {
-				exportFile = exportFile + ".pdf";
-			}
-			txaLog.setText(lp.compile(exportFile));
-			
+			compileToPdf();			
 		} 
 	}
 	// -------------------- Helpers -----------------
 
+	private void compileToPdf() {
+		// TODO: why read vars twice and set this again?
+		ArrayList<String> files = removeUnwantedFiles(getSrcFilesPaths(txfCodeDir.getText()), getFiletypes());
+		LatexProcessor lp = new LatexProcessor(sanitizeString(txfTitle.getText()), sanitizeString(txfAuthor.getText()), files, languagesSelected());
+		String exportFile = txfTargetFile.getText();
+		if (getFileExtension(exportFile).equals("")) {
+			exportFile = exportFile + ".pdf";
+		}
+		txaLog.setText(lp.compile(exportFile));
+	}
+	
+	/**
+	 * Sanitizes string escaping unwanted TeX characters
+	 * 
+	 * @param s string to check
+	 * @return string with unwanted characters escaped
+	 */
+	private String sanitizeString(String s) {
+		return s.replaceAll("\\\\", "\\\\textbackslash")    // \ 
+		.replaceAll("([&%$#_{}])", "\\\\$1")	    // &%$#_{}
+		.replaceAll("~", "\\\\textasciitilde")		// ~
+		.replaceAll("\\^", "\\\\textasciicircum");	// for ^	
+	}
+	
+	
 	private ArrayList<Language> languagesSelected(){
 		ArrayList<Language> languages = new ArrayList<>();
 		
@@ -277,6 +294,7 @@ public class Controller implements Initializable {
 	private boolean isFileAccepted(String file, ArrayList<String> filetypes) {
 		return filetypes.contains(getFileExtension(file));
 	}
+	
 	// -------------------- Checks -----------------
 
 	/**
@@ -298,7 +316,7 @@ public class Controller implements Initializable {
 	private boolean checkAuthorIsOK() {
 		boolean valid = false;
 
-		if (checkString(txfAuthor.getText())) {
+		if (txfAuthor.getText().length() > 0) {
 			valid = true;
 			setStyleClass(txfAuthor, "success");
 		} else {
@@ -311,7 +329,7 @@ public class Controller implements Initializable {
 	private boolean checkTitleIsOK() {
 		boolean valid = false;
 
-		if (checkString(txfTitle.getText())) {
+		if (txfTitle.getText().length() > 0) {
 			valid = true;
 			setStyleClass(txfTitle, "success");
 		} else {
@@ -366,16 +384,8 @@ public class Controller implements Initializable {
 		n.getStyleClass().add(newStyle);
 	}
 
-	/**
-	 * Given string is not empty nor contains illegal characters
-	 * 
-	 * @param s the string to check
-	 * @return true if valid otherwise false
-	 */
-	private boolean checkString(String s) {
-		// TODO: Doesn't support UNICODE (æøå etc)
-		return (s.matches(".*\\W+.*") || s.length() == 0) ? false : true;
-	}
+
+
 
 	/**
 	 * Directory is in fact a directory and is readable and writable.
