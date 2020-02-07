@@ -97,12 +97,8 @@ public class Controller implements Initializable {
 				btnRun.setDisable(true);
 			}
 		} else {
-			Alert alert = new Alert(AlertType.ERROR);
-			alert.setTitle("Error");
-			alert.setHeaderText("Something prevents me from running");
-			alert.setContentText("Are all input fields green?\n" + "If yes, try to close and open again.\n"
-					+ "I sometimes behave weirdly.");
-			alert.showAndWait();
+			new ErrorAlert("Error", "Something prevents me from running", "Are all input fields green?\n"
+					+ "If yes, try to close and open again.\n" + "I sometimes behave weirdly.").showAndWait();
 		}
 	}
 
