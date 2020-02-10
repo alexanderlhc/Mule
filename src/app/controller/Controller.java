@@ -10,6 +10,7 @@ import java.util.ResourceBundle;
 import app.model.Language;
 import app.model.LatexProcessor;
 import gui.ErrorAlert;
+import gui.Validator;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -78,7 +79,7 @@ public class Controller implements Initializable {
 				((CheckBox) n).selectedProperty().addListener(new ChangeListener<Boolean>() {
 					public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
 						checkLanguagesIsOK();
-						setLwSourceFiles(txfCodeDir.getText());
+						setLwSourceFiles(txfCodeDir.getText()); // update source files list
 					}
 				});
 			}
@@ -112,7 +113,7 @@ public class Controller implements Initializable {
 
 		try {
 			path = directoryChooser.showDialog(new Stage()).getAbsolutePath();
-			if (!checkDirectoryIsOK(path))
+			if (!Validator.checkDirectoryIsOK(path))
 				throw new Exception("Invalid directory");
 
 			setLwSourceFiles(path);
@@ -353,7 +354,7 @@ public class Controller implements Initializable {
 	private boolean checkAuthorIsOK() {
 		boolean valid = false;
 
-		if (txfAuthor.getText().length() > 0) {
+		if (Validator.checkAuthorIsOK(txfAuthor.getText())) {
 			valid = true;
 			setStyleClass(txfAuthor, "success");
 		} else {
@@ -365,7 +366,7 @@ public class Controller implements Initializable {
 	private boolean checkTitleIsOK() {
 		boolean valid = false;
 
-		if (txfTitle.getText().length() > 0) {
+		if (Validator.checkTitleIsOK(txfTitle.getText())) {
 			valid = true;
 			setStyleClass(txfTitle, "success");
 		} else {
@@ -376,7 +377,7 @@ public class Controller implements Initializable {
 
 	private boolean checkCodeDirIsOK() {
 		boolean isValid = false;
-		if (checkDirectoryIsOK(txfCodeDir.getText())) {
+		if (Validator.checkDirectoryIsOK(txfCodeDir.getText())) {
 			isValid = true;
 			setStyleClass(txfCodeDir, "success");
 		} else {
@@ -387,8 +388,8 @@ public class Controller implements Initializable {
 
 	private boolean checkTargetIsOK() {
 		boolean isValid = false;
-		String filePath = txfTargetFile.getText();
-		if (!filePath.equals("") && checkDirectoryIsOK(new File(filePath).getParentFile().getAbsolutePath())) {
+		String filePath = new File(txfTargetFile.getText()).getParentFile().getAbsolutePath();
+		if (Validator.checkDirectoryIsOK(filePath)) {
 			isValid = true;
 			setStyleClass(txfTargetFile, "success");
 		} else {
@@ -411,17 +412,6 @@ public class Controller implements Initializable {
 			setStyleClass(vbLanguages, "error");
 		}
 		return isValid;
-	}
-
-	/**
-	 * Directory is in fact a directory and is readable and writable.
-	 * 
-	 * @param path as string
-	 * @return true if valid otherwise false
-	 */
-	private boolean checkDirectoryIsOK(String path) {
-		File f = new File(path);
-		return (f.isDirectory() && f.canRead() && f.canWrite()) ? true : false;
 	}
 
 }
