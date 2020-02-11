@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
@@ -12,73 +13,117 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
+<?import org.controlsfx.glyphfont.*?>
+<?import org.controlsfx.control.CheckComboBox?>
+
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" stylesheets="@app.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.controller.Controller">
    <top>
-      <HBox fx:id="header" BorderPane.alignment="CENTER">
+      <HBox fx:id="header" prefHeight="125.0" BorderPane.alignment="CENTER">
          <children>
             <Label text="Mule" />
          </children>
       </HBox>
    </top>
    <center>
-      <GridPane BorderPane.alignment="CENTER">
+      <GridPane prefHeight="841.0" prefWidth="700.0" styleClass="content" vgap="10.0" BorderPane.alignment="CENTER">
          <columnConstraints>
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="125.0" />
-            <ColumnConstraints hgrow="SOMETIMES" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="150.0" />
+            <ColumnConstraints hgrow="ALWAYS" />
          </columnConstraints>
          <rowConstraints>
-            <RowConstraints maxHeight="50" minHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="50" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="50" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="50.0" minHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="50.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="50.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="75.0" minHeight="75.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="50" minHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="50.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="50.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="50" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="150.0" prefHeight="200.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="50.0" minHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="545.0" minHeight="406.0" prefHeight="545.0" vgrow="SOMETIMES" />
          </rowConstraints>
          <children>
-            <Label text="Author: " />
-            <TextField fx:id="txfAuthor" promptText="name" GridPane.columnIndex="1" />
-            <Label text="Title: " GridPane.rowIndex="1" />
-            <TextField fx:id="txfTitle" promptText="report title" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <HBox alignment="CENTER_LEFT">
+               <children>
+                  <Label text="Author: " />
+               </children>
+            </HBox>
+            <HBox GridPane.columnIndex="1">
+               <children>
+                  <TextField fx:id="txfAuthor" promptText="name" HBox.hgrow="ALWAYS" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" GridPane.rowIndex="1">
+               <children>
+                  <Label text="Title: " />
+               </children>
+            </HBox>
+            <HBox GridPane.columnIndex="1" GridPane.rowIndex="1">
+               <children>
+                  <TextField fx:id="txfTitle" promptText="report title" HBox.hgrow="ALWAYS" />
+               </children>
+            </HBox>
             <Label text="Save file as:" GridPane.rowIndex="2" />
             <HBox GridPane.columnIndex="1" GridPane.rowIndex="2">
                <children>
-                  <Button mnemonicParsing="false" onAction="#chooseSave" text="choose location" />
-                  <TextField fx:id="txfTargetFile" editable="false" promptText="..." />
+                  <Button mnemonicParsing="false" onAction="#chooseSave" text="choose location" >
+                     <graphic>
+			      		 <Glyph fontFamily="FontAwesome" icon="save"/>
+			   		 </graphic>
+                  </Button>
+                  <TextField fx:id="txfTargetFile" editable="false" promptText="..." HBox.hgrow="ALWAYS" />
                </children>
             </HBox>
-            <Label text="Code directory: " GridPane.rowIndex="4" />
+            <HBox alignment="CENTER_LEFT" GridPane.rowIndex="3">
+               <children>
+                  <Label text="Language(s): " />
+               </children>
+            </HBox>
+            <CheckComboBox fx:id="ccbLanguages" prefHeight="25.0" prefWidth="192.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            
+            <HBox alignment="CENTER_LEFT" GridPane.rowIndex="4">
+               <children>
+                  <Label text="Code directory: " />
+               </children>
+            </HBox>
             <HBox GridPane.columnIndex="1" GridPane.rowIndex="4">
                <children>
-                  <Button mnemonicParsing="false" onAction="#chooseDirectory" text="choose directory" />
-                  <TextField fx:id="txfCodeDir" editable="false" promptText="..." />
+                  <Button mnemonicParsing="false" onAction="#chooseDirectory" text="choose directory" >
+                  	 <graphic>
+			      		 <Glyph fontFamily="FontAwesome" icon="FOLDER_OPEN"/>
+			   		 </graphic>
+                  </Button>
+                  <TextField fx:id="txfCodeDir" editable="false" promptText="..." HBox.hgrow="ALWAYS" />
                </children>
             </HBox>
-			<ListView fx:id="lwSourceFiles" maxHeight="200.0" minHeight="100.0" visible="false" GridPane.columnSpan="2" GridPane.rowIndex="6" GridPane.rowSpan="2" />
-            <Label text="Language(s): " GridPane.rowIndex="3" />
-            <VBox fx:id="vbLanguages" GridPane.columnIndex="1" GridPane.rowIndex="3">
+			<ListView fx:id="lwSourceFiles" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+            <VBox GridPane.columnSpan="2" GridPane.rowIndex="6">
                <children>
-                  <CheckBox fx:id="cbLangJava" mnemonicParsing="false" selected="true" text="Java" />
-                  <CheckBox fx:id="cbLangCsharp" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="C#" />
-                  <CheckBox fx:id="cbLangSql" layoutX="10.0" layoutY="29.0" mnemonicParsing="false" text="SQL" />
-               </children>
-            </VBox>
-            <VBox GridPane.columnSpan="2" GridPane.rowIndex="8">
-               <children>
-                  <Label styleClass="header-log" text="Log" />
-                  <TextArea fx:id="txaLog" editable="false" wrapText="true" />
+                  <HBox alignment="CENTER_LEFT">
+                     <children>
+                        <Label onMouseClicked="#logAreaToggle" styleClass="header-log" text="Log" />
+                     </children>
+                  </HBox>
+                  <HBox fx:id="hbLogArea" alignment="TOP_CENTER" visible="false">
+                     <children>
+                        <TextArea fx:id="txaLog" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" wrapText="true" />
+                     </children>
+                  </HBox>
                </children>
             </VBox>
          </children>
+         <padding>
+            <Insets left="5.0" right="5.0" top="3.0" />
+         </padding>
       </GridPane>
    </center>
    <bottom>
-      <HBox styleClass="footer">
+      <HBox prefHeight="0.0" prefWidth="700.0" styleClass="footer">
          <children>
-            <Button fx:id="btnRun" mnemonicParsing="false" onAction="#createReport" text="RUN" />
+			<Button fx:id="btnRun" minHeight="50.0" minWidth="100.0" mnemonicParsing="false" onAction="#createReport" text="RUN!" >
+			    <graphic>
+			        <Glyph fontFamily="FontAwesome" icon="WHEELCHAIR"/>
+			    </graphic>
+			</Button>
+
          </children>
       </HBox>
    </bottom>

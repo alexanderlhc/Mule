@@ -1,36 +1,65 @@
 #header {
-	-fx-background-color: green;
+	-fx-background-color: teal;
 	-fx-alignment: center;
 }
 
 #header .label {
 	-fx-font-size: 32;
+	-fx-text-fill: white;
 
 }
 
+.content {
+	-fx-background-color: #ffffff;
+	-fx-font-size: 16px;
+}
 
-.content HBox {
-	-fx-alignment: center;
+.content .text-input {
+	-fx-background-color: #fafafa;
+	-fx-border-radius: 5;
+	-fx-border-color: #fefefe;
+	-fx-effect: innershadow( gaussian, rgba(0,0,0,.08), 1, 1, 2, 1);
+}
+
+.text-field .text, .text-field:focused{
+	-fx-fill: #666;
+    -fx-highlight-text-fill: white;
+    -fx-text-fill: green;
 }
 
 .footer {
 	-fx-alignment: top-right;
 }
+.button Glyph {
+	-fx-text-fill: #666666;
+}
+.button {
+	-fx-background-color: lightblue;
+	-fx-text-fill: #666666;
+	-fx-border-radius: 5px;
+}
 
+.button:hover {
+	-fx-background-color: #5fd7d7;
+	-fx-text-fill: white;
+}
+
+
+
+.content .label {
+	-fx-text-fill: #666;
+}
 
 .error {
-  -fx-border-color: red;
-  -fx-text-box-border: red;
-  -fx-focus-color: red;
+  -fx-border-color: red #ffebee;
+  -fx-text-box-border: #ffebee;
 }
 
 .success {
-  -fx-border-color: green;
-  -fx-text-box-border: green;
-  -fx-focus-color: green;
+  -fx-border-color: #57b846 !important;
+  -fx-text-box-border: #57b846 !important;  
 }
 
 .header-log {
 	-fx-font-size: 24;
-	-fx-background-color: red;
 }

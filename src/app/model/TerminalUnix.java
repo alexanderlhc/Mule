@@ -8,11 +8,11 @@ import java.io.InputStreamReader;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 
-public class TerminalUnix extends Terminal{
+public class TerminalUnix extends Terminal {
 
-	public TerminalUnix(String workDir) {
+	public TerminalUnix(String workDir) throws Exception {
 		super(workDir);
-		
+
 		if (!canRun()) {
 			Alert alert = new Alert(AlertType.ERROR);
 			alert.setTitle("Error LaTeX not installed!");
@@ -24,7 +24,7 @@ public class TerminalUnix extends Terminal{
 	}
 
 	@Override
-	public String compileToPDF() {
+	public String compileToPDF() throws Exception {
 		StringBuilder output = new StringBuilder();
 		try {
 			String[] compile = { "latexmk", "-pdf", "report.tex" };
@@ -37,22 +37,19 @@ public class TerminalUnix extends Terminal{
 
 			String line;
 			while ((line = reader.readLine()) != null) {
-				System.out.println(line + "\n");
 				output.append(line);
 			}
 			int exitCode = process.waitFor();
 			output.append("\nExited with error code : " + exitCode + "\n");
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			throw new Exception("Can't compile PDF.");
 		}
-		System.out.println(output.toString());
+
 		return output.toString();
 	}
 
 	@Override
-	public boolean canRun() {
+	public boolean canRun() throws Exception {
 		boolean canRun = false;
 		StringBuilder output = new StringBuilder();
 		try {
@@ -63,21 +60,18 @@ public class TerminalUnix extends Terminal{
 			BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 			String line;
 			while ((line = reader.readLine()) != null) {
-				System.out.println(line + "\n");
 				output.append(line);
 			}
-	
-			if(!output.toString().contains("not found")) {
+
+			if (!output.toString().contains("not found")) {
 				canRun = true;
 			}
-			
+
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new Exception("Unable to locate latexmk on your system");
 		}
-		
+
 		return canRun;
 	}
-
 
 }
