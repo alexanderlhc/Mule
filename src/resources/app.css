@@ -30,16 +30,21 @@
 .footer {
 	-fx-alignment: top-right;
 }
-
+.button Glyph {
+	-fx-text-fill: #666666;
+}
 .button {
 	-fx-background-color: lightblue;
-	-fx-text-fill: white;
+	-fx-text-fill: #666666;
 	-fx-border-radius: 5px;
 }
 
 .button:hover {
 	-fx-background-color: #5fd7d7;
+	-fx-text-fill: white;
 }
+
+
 
 .content .label {
 	-fx-text-fill: #666;

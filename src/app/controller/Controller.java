@@ -61,7 +61,6 @@ public class Controller implements Initializable {
 	 */
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-
 		lwSourceFiles.setManaged(false);
 
 		txfAuthor.textProperty().addListener((obs, oldText, newText) -> {

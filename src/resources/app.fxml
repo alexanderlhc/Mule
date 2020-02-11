@@ -13,6 +13,8 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
+<?import org.controlsfx.glyphfont.*?>
+
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" stylesheets="@app.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.controller.Controller">
    <top>
@@ -61,7 +63,11 @@
             <Label text="Save file as:" GridPane.rowIndex="2" />
             <HBox GridPane.columnIndex="1" GridPane.rowIndex="2">
                <children>
-                  <Button mnemonicParsing="false" onAction="#chooseSave" text="choose location" />
+                  <Button mnemonicParsing="false" onAction="#chooseSave" text="choose location" >
+                     <graphic>
+			      		 <Glyph fontFamily="FontAwesome" icon="save"/>
+			   		 </graphic>
+                  </Button>
                   <TextField fx:id="txfTargetFile" editable="false" promptText="..." HBox.hgrow="ALWAYS" />
                </children>
             </HBox>
@@ -84,7 +90,11 @@
             </HBox>
             <HBox GridPane.columnIndex="1" GridPane.rowIndex="4">
                <children>
-                  <Button mnemonicParsing="false" onAction="#chooseDirectory" text="choose directory" />
+                  <Button mnemonicParsing="false" onAction="#chooseDirectory" text="choose directory" >
+                  	 <graphic>
+			      		 <Glyph fontFamily="FontAwesome" icon="FOLDER_OPEN"/>
+			   		 </graphic>
+                  </Button>
                   <TextField fx:id="txfCodeDir" editable="false" promptText="..." HBox.hgrow="ALWAYS" />
                </children>
             </HBox>
@@ -112,7 +122,12 @@
    <bottom>
       <HBox prefHeight="0.0" prefWidth="700.0" styleClass="footer">
          <children>
-            <Button fx:id="btnRun" minHeight="50.0" minWidth="100.0" mnemonicParsing="false" onAction="#createReport" text="RUN!" />
+			<Button fx:id="btnRun" minHeight="50.0" minWidth="100.0" mnemonicParsing="false" onAction="#createReport" text="RUN!" >
+			    <graphic>
+			        <Glyph fontFamily="FontAwesome" icon="WHEELCHAIR"/>
+			    </graphic>
+			</Button>
+
          </children>
       </HBox>
    </bottom>
