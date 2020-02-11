@@ -62,7 +62,7 @@ public class LatexProcessor {
 
 		for (String path : files) {
 			File f = new File(path);
-			String filetype = Controller.getFileExtension(f.getName()).substring(1);
+			String filetype = Controller.getFileExtension(f.getName());
 			if (language.getFiletypes().contains(filetype)) {
 				sb.append(String.format("\\section{%s}%n", f.getName()));
 				path = path.replaceAll("\\\\", "/");

@@ -37,7 +37,6 @@ public class TerminalUnix extends Terminal {
 
 			String line;
 			while ((line = reader.readLine()) != null) {
-				System.out.println(line + "\n");
 				output.append(line);
 			}
 			int exitCode = process.waitFor();
@@ -61,7 +60,6 @@ public class TerminalUnix extends Terminal {
 			BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 			String line;
 			while ((line = reader.readLine()) != null) {
-				System.out.println(line + "\n");
 				output.append(line);
 			}
 

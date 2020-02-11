@@ -7,12 +7,13 @@ import java.util.Iterator;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
+import org.controlsfx.control.CheckComboBox;
+
 import app.model.Language;
 import app.model.LatexProcessor;
-import gui.ErrorAlert;
+import gui.Popup;
 import gui.Validator;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
@@ -20,12 +21,10 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -42,13 +41,7 @@ public class Controller implements Initializable {
 	@FXML
 	private ListView<String> lwSourceFiles;
 	@FXML
-	private VBox vbLanguages;
-	@FXML
-	private CheckBox cbLangJava;
-	@FXML
-	private CheckBox cbLangCsharp;
-	@FXML
-	private CheckBox cbLangSql;
+	private CheckComboBox<Language> ccbLanguages;
 	@FXML
 	private TextArea txaLog;
 	@FXML
@@ -79,16 +72,15 @@ public class Controller implements Initializable {
 			lwSourceFiles.setVisible(true);
 		});
 
-		// CheckBoxes (Language selection)
-		for (Node n : vbLanguages.getChildren()) {
-			if (n instanceof CheckBox) {
-				((CheckBox) n).selectedProperty().addListener(new ChangeListener<Boolean>() {
-					public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
-						checkLanguagesIsOK();
-						setLwSourceFiles(txfCodeDir.getText()); // update source files list
-					}
-				});
+		ccbLanguages.getCheckModel().getCheckedItems().addListener(new ListChangeListener<Language>() {
+			public void onChanged(ListChangeListener.Change<? extends Language> l) {
+				checkLanguagesIsOK();
+				setLwSourceFiles(txfCodeDir.getText()); // update source files list
 			}
+		});
+
+		for (Language l : Language.values()) {
+			ccbLanguages.getItems().add(l);
 		}
 
 		hbLogArea.managedProperty().bind(hbLogArea.visibleProperty());
@@ -104,9 +96,11 @@ public class Controller implements Initializable {
 			if (dialogConfirmCompile()) { // user accepts
 				compileToPdf();
 				btnRun.setDisable(true);
+				new Popup("Document is ready", "Document has been compiled!", "Find it at " + txfTargetFile.getText(),
+						AlertType.INFORMATION).showAndWait();
 			}
 		} else {
-			new ErrorAlert("Error", "Something prevents me from running", "Are all input fields green?\n"
+			new Popup("Error", "Something prevents me from running", "Are all input fields green?\n"
 					+ "If yes, try to close and open again.\n" + "I sometimes behave weirdly.").showAndWait();
 		}
 	}
@@ -184,9 +178,13 @@ public class Controller implements Initializable {
 	/**
 	 * Starts the chain of calls, thus beginning the compilation of the code. Also
 	 * updates the log area with "useful" information about the process.
+	 * precondition: source files must be sanitized first
 	 */
 	private void compileToPdf() {
-		ArrayList<String> files = removeUnwantedFiles(getSrcFilesPaths(txfCodeDir.getText()), getFiletypes());
+		ArrayList<String> files = new ArrayList<String>();
+		for (String file : lwSourceFiles.getItems()) {
+			files.add(file);
+		}
 		try {
 			LatexProcessor lp = new LatexProcessor(sanitizeString(txfTitle.getText()),
 					sanitizeString(txfAuthor.getText()), files, languagesSelected());
@@ -196,7 +194,7 @@ public class Controller implements Initializable {
 			}
 			txaLog.setText(lp.compile(exportFile));
 		} catch (Exception e) {
-			new ErrorAlert("Error", "Something went wrong with the filesystem", e.toString()).showAndWait();
+			new Popup("Error", "Something went wrong with the filesystem", e.toString()).showAndWait();
 		}
 
 	}
@@ -222,15 +220,10 @@ public class Controller implements Initializable {
 	private ArrayList<Language> languagesSelected() {
 		ArrayList<Language> languages = new ArrayList<>();
 
-		if (cbLangJava.isSelected()) {
-			languages.add(Language.JAVA);
+		for (Language language : ccbLanguages.getCheckModel().getCheckedItems()) {
+			languages.add(language);
 		}
-		if (cbLangCsharp.isSelected()) {
-			languages.add(Language.CSHARP);
-		}
-		if (cbLangSql.isSelected()) {
-			languages.add(Language.SQL);
-		}
+
 		return languages;
 	}
 
@@ -249,18 +242,13 @@ public class Controller implements Initializable {
 	 * 
 	 * @return list of filetypes or empty if non
 	 */
-	private ArrayList<String> getFiletypes() {
-		ArrayList<String> filetypes = new ArrayList<String>();
+	private ArrayList<Language> getFiletypes() {
+		ArrayList<Language> filetypes = new ArrayList<Language>();
 
-		if (cbLangJava.isSelected()) {
-			filetypes.add(".java");
+		for (int i : ccbLanguages.getCheckModel().getCheckedIndices()) {
+			filetypes.add(ccbLanguages.getItems().get(i));
 		}
-		if (cbLangCsharp.isSelected()) {
-			filetypes.add(".cs");
-		}
-		if (cbLangSql.isSelected()) {
-			filetypes.add(".sql");
-		}
+
 		return filetypes;
 	}
 
@@ -297,14 +285,14 @@ public class Controller implements Initializable {
 	 * Gets file extension from filepath.
 	 * 
 	 * @param path to file
-	 * @return file extension (with prepending dot)
+	 * @return file extension
 	 */
 	public static String getFileExtension(String path) {
 		int indexExtension = path.lastIndexOf(".");
 		if (indexExtension == -1) {
 			return "";
 		}
-		return path.substring(indexExtension).toLowerCase();
+		return path.substring(indexExtension + 1).toLowerCase();
 	}
 
 	/**
@@ -314,7 +302,7 @@ public class Controller implements Initializable {
 	 * @param filetypes list of accepted filetypes (prepended with dot!)
 	 * @return same list without unwanted files.
 	 */
-	private ArrayList<String> removeUnwantedFiles(ArrayList<String> files, ArrayList<String> filetypes) {
+	private ArrayList<String> removeUnwantedFiles(ArrayList<String> files, ArrayList<Language> filetypes) {
 		Iterator<String> i = files.iterator();
 		while (i.hasNext()) {
 			String f = i.next();
@@ -331,8 +319,15 @@ public class Controller implements Initializable {
 	 * @param filetypes that gives acceptance
 	 * @return true if file has valid file extension, otherwise false
 	 */
-	private boolean isFileAccepted(String file, ArrayList<String> filetypes) {
-		return filetypes.contains(getFileExtension(file));
+	private boolean isFileAccepted(String file, ArrayList<Language> filetypes) {
+		boolean isAccepted = false;
+		int i = 0;
+		while (filetypes.size() > i && isAccepted == false) {
+			if (filetypes.get(i).getFiletypes().contains(getFileExtension(file)))
+				isAccepted = true;
+			i++;
+		}
+		return isAccepted;
 	}
 
 	/**
@@ -420,9 +415,9 @@ public class Controller implements Initializable {
 		boolean isValid = false;
 		if (getFiletypes().size() > 0) {
 			isValid = true;
-			setSuccessState(vbLanguages, "success");
+			setSuccessState(ccbLanguages, "success");
 		} else {
-			setSuccessState(vbLanguages, "error");
+			setSuccessState(ccbLanguages, "error");
 		}
 		return isValid;
 	}

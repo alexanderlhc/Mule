@@ -14,6 +14,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import org.controlsfx.glyphfont.*?>
+<?import org.controlsfx.control.CheckComboBox?>
 
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" stylesheets="@app.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.controller.Controller">
@@ -76,13 +77,8 @@
                   <Label text="Language(s): " />
                </children>
             </HBox>
-            <VBox fx:id="vbLanguages" GridPane.columnIndex="1" GridPane.rowIndex="3">
-               <children>
-                  <CheckBox fx:id="cbLangJava" mnemonicParsing="false" selected="true" text="Java" />
-                  <CheckBox fx:id="cbLangCsharp" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="C#" />
-                  <CheckBox fx:id="cbLangSql" layoutX="10.0" layoutY="29.0" mnemonicParsing="false" text="SQL" />
-               </children>
-            </VBox>
+            <CheckComboBox fx:id="ccbLanguages" prefHeight="25.0" prefWidth="192.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            
             <HBox alignment="CENTER_LEFT" GridPane.rowIndex="4">
                <children>
                   <Label text="Code directory: " />
