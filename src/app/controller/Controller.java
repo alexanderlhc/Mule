@@ -24,6 +24,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
@@ -52,12 +53,16 @@ public class Controller implements Initializable {
 	private TextArea txaLog;
 	@FXML
 	private Button btnRun;
+	@FXML
+	private HBox hbLogArea;
 
 	/**
 	 * Initializes the listeners used for live validation
 	 */
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+
+		lwSourceFiles.setManaged(false);
 
 		txfAuthor.textProperty().addListener((obs, oldText, newText) -> {
 			checkAuthorIsOK();
@@ -71,6 +76,8 @@ public class Controller implements Initializable {
 		});
 		txfCodeDir.textProperty().addListener((obs, oldText, newText) -> {
 			checkCodeDirIsOK();
+			lwSourceFiles.setManaged(true);
+			lwSourceFiles.setVisible(true);
 		});
 
 		// CheckBoxes (Language selection)
@@ -84,6 +91,8 @@ public class Controller implements Initializable {
 				});
 			}
 		}
+
+		hbLogArea.managedProperty().bind(hbLogArea.visibleProperty());
 	}
 
 	/**
@@ -144,6 +153,11 @@ public class Controller implements Initializable {
 		}
 
 		txfTargetFile.setText(path);
+	}
+
+	@FXML
+	private void logAreaToggle() {
+		hbLogArea.setVisible(!hbLogArea.isVisible());
 	}
 
 	/**
@@ -329,8 +343,8 @@ public class Controller implements Initializable {
 	 * @param node to update
 	 * @param css  class style
 	 */
-	private void setStyleClass(Node n, String newStyle) {
-		n.getStyleClass().clear();
+	private void setSuccessState(Node n, String newStyle) {
+		n.getStyleClass().removeAll("success", "error");
 		n.getStyleClass().add(newStyle);
 	}
 	// -------------------- Checks -----------------
@@ -356,9 +370,9 @@ public class Controller implements Initializable {
 
 		if (Validator.checkAuthorIsOK(txfAuthor.getText())) {
 			valid = true;
-			setStyleClass(txfAuthor, "success");
+			setSuccessState(txfAuthor, "success");
 		} else {
-			setStyleClass(txfAuthor, "error");
+			setSuccessState(txfAuthor, "error");
 		}
 		return valid;
 	}
@@ -368,9 +382,9 @@ public class Controller implements Initializable {
 
 		if (Validator.checkTitleIsOK(txfTitle.getText())) {
 			valid = true;
-			setStyleClass(txfTitle, "success");
+			setSuccessState(txfTitle, "success");
 		} else {
-			setStyleClass(txfTitle, "error");
+			setSuccessState(txfTitle, "error");
 		}
 		return valid;
 	}
@@ -379,9 +393,9 @@ public class Controller implements Initializable {
 		boolean isValid = false;
 		if (Validator.checkDirectoryIsOK(txfCodeDir.getText())) {
 			isValid = true;
-			setStyleClass(txfCodeDir, "success");
+			setSuccessState(txfCodeDir, "success");
 		} else {
-			setStyleClass(txfCodeDir, "error");
+			setSuccessState(txfCodeDir, "error");
 		}
 		return isValid;
 	}
@@ -391,9 +405,9 @@ public class Controller implements Initializable {
 		String filePath = new File(txfTargetFile.getText()).getParentFile().getAbsolutePath();
 		if (Validator.checkDirectoryIsOK(filePath)) {
 			isValid = true;
-			setStyleClass(txfTargetFile, "success");
+			setSuccessState(txfTargetFile, "success");
 		} else {
-			setStyleClass(txfTargetFile, "error");
+			setSuccessState(txfTargetFile, "error");
 		}
 		return isValid;
 	}
@@ -407,9 +421,9 @@ public class Controller implements Initializable {
 		boolean isValid = false;
 		if (getFiletypes().size() > 0) {
 			isValid = true;
-			setStyleClass(vbLanguages, "success");
+			setSuccessState(vbLanguages, "success");
 		} else {
-			setStyleClass(vbLanguages, "error");
+			setSuccessState(vbLanguages, "error");
 		}
 		return isValid;
 	}
