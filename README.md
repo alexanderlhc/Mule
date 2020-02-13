@@ -1,5 +1,7 @@
 # README
 
+![Screenshot](https://i.imgur.com/BKcq0MB.png)
+
 ## Guide
 
 Download the `Mule-[OS].zip` from [here](https://github.com/alexanderlhc/Mule/releases/tag/aves.trochilidae)
