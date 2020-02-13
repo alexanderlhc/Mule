@@ -66,7 +66,7 @@ public abstract class Terminal {
 	public String compileAndMove(String path) throws Exception {
 		String compiledLog = compileToPDF();
 		movePdfToDestination(path);
-		// deleteDirRecursive(workDir);
+		deleteDirRecursive(workDir);
 
 		return compiledLog + "\n\n Finished!";
 	}
