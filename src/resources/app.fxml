@@ -2,7 +2,6 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.TextArea?>
@@ -16,8 +15,7 @@
 <?import org.controlsfx.glyphfont.*?>
 <?import org.controlsfx.control.CheckComboBox?>
 
-
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" stylesheets="@app.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.controller.Controller">
+<BorderPane maxHeight="900" maxWidth="-Infinity" minHeight="750" minWidth="-Infinity" stylesheets="@app.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.controller.Controller">
    <top>
       <HBox fx:id="header" prefHeight="125.0" BorderPane.alignment="CENTER">
          <children>
@@ -26,7 +24,7 @@
       </HBox>
    </top>
    <center>
-      <GridPane prefHeight="841.0" prefWidth="700.0" styleClass="content" vgap="10.0" BorderPane.alignment="CENTER">
+      <GridPane prefHeight="700" prefWidth="700.0" styleClass="content" vgap="10.0" BorderPane.alignment="CENTER">
          <columnConstraints>
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="150.0" />
             <ColumnConstraints hgrow="ALWAYS" />
@@ -38,7 +36,7 @@
             <RowConstraints maxHeight="75.0" minHeight="75.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="50.0" minHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="545.0" minHeight="406.0" prefHeight="545.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="300.0" minHeight="150.0" prefHeight="300.0" vgrow="SOMETIMES" />
          </rowConstraints>
          <children>
             <HBox alignment="CENTER_LEFT">
@@ -64,9 +62,9 @@
             <Label text="Save file as:" GridPane.rowIndex="2" />
             <HBox GridPane.columnIndex="1" GridPane.rowIndex="2">
                <children>
-                  <Button mnemonicParsing="false" onAction="#chooseSave" text="choose location" >
+                  <Button mnemonicParsing="false" onAction="#chooseSave" text="choose location">
                      <graphic>
-			      		 <Glyph fontFamily="FontAwesome" icon="save"/>
+			      		 <Glyph fontFamily="FontAwesome" icon="save" />
 			   		 </graphic>
                   </Button>
                   <TextField fx:id="txfTargetFile" editable="false" promptText="..." HBox.hgrow="ALWAYS" />
@@ -86,15 +84,15 @@
             </HBox>
             <HBox GridPane.columnIndex="1" GridPane.rowIndex="4">
                <children>
-                  <Button mnemonicParsing="false" onAction="#chooseDirectory" text="choose directory" >
+                  <Button mnemonicParsing="false" onAction="#chooseDirectory" text="choose directory">
                   	 <graphic>
-			      		 <Glyph fontFamily="FontAwesome" icon="FOLDER_OPEN"/>
+			      		 <Glyph fontFamily="FontAwesome" icon="FOLDER_OPEN" />
 			   		 </graphic>
                   </Button>
                   <TextField fx:id="txfCodeDir" editable="false" promptText="..." HBox.hgrow="ALWAYS" />
                </children>
             </HBox>
-			<ListView fx:id="lwSourceFiles" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+			<ListView fx:id="lwSourceFiles" prefHeight="500.0" prefWidth="540.0" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="5" />
             <VBox GridPane.columnSpan="2" GridPane.rowIndex="6">
                <children>
                   <HBox alignment="CENTER_LEFT">
@@ -118,9 +116,9 @@
    <bottom>
       <HBox prefHeight="0.0" prefWidth="700.0" styleClass="footer">
          <children>
-			<Button fx:id="btnRun" minHeight="50.0" minWidth="100.0" mnemonicParsing="false" onAction="#createReport" text="RUN!" >
+			<Button fx:id="btnRun" minHeight="50.0" minWidth="100.0" mnemonicParsing="false" onAction="#createReport" text="RUN!">
 			    <graphic>
-			        <Glyph fontFamily="FontAwesome" icon="WHEELCHAIR"/>
+			        <Glyph fontFamily="FontAwesome" icon="WHEELCHAIR" />
 			    </graphic>
 			</Button>
 
