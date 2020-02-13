@@ -26,7 +26,7 @@ public class TerminalWindows extends Terminal {
 	public String compileToPDF() throws Exception {
 		StringBuilder output = new StringBuilder();
 		try {
-			String[] compile = { "cmd.exe", "/c", pdflatexPath, "report.tex" };
+			String[] compile = { "cmd.exe", "/c", pdflatexPath, "-pdf", "report.tex" };
 
 			ProcessBuilder processBuilder = new ProcessBuilder();
 			processBuilder.directory(new File(workDir));
@@ -61,7 +61,7 @@ public class TerminalWindows extends Terminal {
 
 	@Override
 	public void setPdflatexPath() {
-		pdflatexPath = pdflatexPath + File.separator + "win32" + File.separator + "latexmk.exe";
+		pdflatexPath = tinyTexPath + "win32" + File.separator + "latexmk.exe";
 	}
 
 }
