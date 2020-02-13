@@ -2,27 +2,16 @@
 
 ## Guide
 
-### Windows
-
-Download the `Mule-windows.zip` file [here](https://github.com/alexanderlhc/Mule/releases/tag/aves.gruidae)
-The size is large because it must carry the texLive compiler.
+Download the `Mule-[OS].zip` from [here](https://github.com/alexanderlhc/Mule/releases/tag/aves.trochilidae)
 
 * Extract zip
-* Run `Mule.jar` (NOTE the `texLive` directory must be next to `Mule.jar`
-* Rest should work out
-
-### Mac/Linux
-
-* Install latexmk [read howto here](https://mg.readthedocs.io/latexmk.html)
-* Extract zip
-* Run `Mule.jar` [here](https://github.com/alexanderlhc/Mule/releases/tag/aves.gruidae)
+* Run `Mule.jar` (NOTE the `TinyTeX` directory must be next to `Mule.jar`
 * Rest should work out
 
 ## TODO
 
 ### Must 
 
-- [ ] Pass binary for Mac and Linux
 - [ ] More languages added + confirm color palette
 
 ### Cleaner code
@@ -33,10 +22,6 @@ The size is large because it must carry the texLive compiler.
 ### Nice to have
 
 - [ ] Update log during compile (hard: see section further down)
-
-### Cosmetic care for GUI
-
-- [ ] Clearer when fields are invalid and acceptable
 
 ## Updating log during compilation
 
