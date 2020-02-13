@@ -1,15 +1,26 @@
 package app.model;
 
 import java.io.File;
+import java.net.URISyntaxException;
 
 public abstract class Terminal {
-//	protected final static String WORKING_DIR = "src"+File.separator+"resources"+File.separator+"tex"+File.separator;
+	protected final String tinyTexPath;
+	protected String pdflatexPath;
 	protected final static String COMPILED_PDF_NAME = "report.pdf";
 	protected String workDir;
 
-	public Terminal(String workDir) {
+	public Terminal(String workDir) throws Exception {
 		this.workDir = workDir;
+		try {
+			tinyTexPath = new File(Terminal.class.getProtectionDomain().getCodeSource().getLocation().toURI())
+					.getParent() + File.separator + "TinyTeX" + File.separator + "bin" + File.separator;
+		} catch (URISyntaxException e) {
+			throw new Exception("TinyTex not found");
+		}
+		setPdflatexPath();
 	}
+
+	public abstract void setPdflatexPath();
 
 	/**
 	 * Compiles the TeX files to the final report
@@ -36,8 +47,6 @@ public abstract class Terminal {
 		// TODO: validate compile tex before parsing/moving?
 		File fSource = new File(workDir + COMPILED_PDF_NAME);
 		File fDestination = new File(path);
-		// TODO: remove eventually!
-		System.out.println(path);
 		fSource.renameTo(fDestination);
 	}
 

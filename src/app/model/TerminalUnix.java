@@ -9,6 +9,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 
 public class TerminalUnix extends Terminal {
+	// private String pdflatexPath;
 
 	public TerminalUnix(String workDir) throws Exception {
 		super(workDir);
@@ -27,7 +28,7 @@ public class TerminalUnix extends Terminal {
 	public String compileToPDF() throws Exception {
 		StringBuilder output = new StringBuilder();
 		try {
-			String[] compile = { "latexmk", "-pdf", "report.tex" };
+			String[] compile = { pdflatexPath, "-pdf", "report.tex" };
 			ProcessBuilder processBuilder = new ProcessBuilder();
 			processBuilder.directory(new File(workDir));
 			processBuilder.command(compile);
@@ -53,7 +54,7 @@ public class TerminalUnix extends Terminal {
 		boolean canRun = false;
 		StringBuilder output = new StringBuilder();
 		try {
-			String[] compile = { "which", "latexmk" };
+			String[] compile = { "which", pdflatexPath };
 			ProcessBuilder processBuilder = new ProcessBuilder();
 			processBuilder.command(compile);
 			Process process = processBuilder.start();
@@ -72,6 +73,11 @@ public class TerminalUnix extends Terminal {
 		}
 
 		return canRun;
+	}
+
+	@Override
+	public void setPdflatexPath() {
+		pdflatexPath = tinyTexPath + "x86_64-linux" + File.separator + "latexmk";
 	}
 
 }
