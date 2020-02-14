@@ -37,7 +37,16 @@ public abstract class Terminal {
 	 * @return true or false
 	 * @throws Exception
 	 */
-	public abstract boolean canRun() throws Exception;
+	public boolean canRun() throws Exception {
+		File pdfLatex = null;
+		try {
+			pdfLatex = new File(pdflatexPath);
+
+		} catch (Exception e) {
+			throw new Exception("Can't compile PDF.");
+		}
+		return (pdfLatex.exists()) ? true : false;
+	}
 
 	/**
 	 * 

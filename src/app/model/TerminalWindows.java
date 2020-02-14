@@ -48,18 +48,6 @@ public class TerminalWindows extends Terminal {
 	}
 
 	@Override
-	public boolean canRun() throws Exception {
-		File pdfLatex = null;
-		try {
-			pdfLatex = new File(pdflatexPath);
-
-		} catch (Exception e) {
-			throw new Exception("Can't compile PDF.");
-		}
-		return (pdfLatex.exists()) ? true : false;
-	}
-
-	@Override
 	public void setPdflatexPath() {
 		pdflatexPath = tinyTexPath + "win32" + File.separator + "latexmk.exe";
 	}
