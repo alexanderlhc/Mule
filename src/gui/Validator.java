@@ -40,4 +40,16 @@ public class Validator {
 		return (f.isDirectory() && f.canRead() && f.canWrite()) ? true : false;
 	}
 
+	/**
+	 * Sanitizes string escaping unwanted TeX characters
+	 * 
+	 * @param s string to check
+	 * @return string with unwanted characters escaped
+	 */
+	public static String sanitizeString(String s) {
+		return s.replaceAll("\\\\", "\\\\textbackslash") // \
+				.replaceAll("([&%$#_{}])", "\\\\$1") // &%$#_{}
+				.replaceAll("~", "\\\\textasciitilde") // ~
+				.replaceAll("\\^", "\\\\textasciicircum"); // for ^
+	}
 }

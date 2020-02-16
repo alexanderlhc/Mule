@@ -4,6 +4,7 @@ import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -11,13 +12,15 @@ import org.controlsfx.control.CheckComboBox;
 
 import app.model.Language;
 import app.model.LatexProcessor;
+import app.model.Terminal;
+import app.model.TerminalUnix;
+import app.model.TerminalWindows;
 import gui.Popup;
 import gui.Validator;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
@@ -31,13 +34,13 @@ import javafx.stage.Stage;
 
 public class Controller implements Initializable {
 	@FXML
-	private TextField txfAuthor = new TextField();
+	private TextField txfAuthor;
 	@FXML
 	private TextField txfTitle;
 	@FXML
 	private TextField txfCodeDir;
 	@FXML
-	private TextField txfTargetFile;
+	private TextField txfResultFile;
 	@FXML
 	private ListView<String> lwSourceFiles;
 	@FXML
@@ -63,14 +66,19 @@ public class Controller implements Initializable {
 		txfTitle.textProperty().addListener((obs, oldText, newText) -> {
 			checkTitleIsOK();
 		});
-		txfTargetFile.textProperty().addListener((obs, oldText, newText) -> {
+		txfResultFile.textProperty().addListener((obs, oldText, newText) -> {
 			checkTargetIsOK();
 		});
 		txfCodeDir.textProperty().addListener((obs, oldText, newText) -> {
 			checkCodeDirIsOK();
-			lwSourceFiles.setManaged(true);
+			lwSourceFiles.setManaged(true); // pane adopts to its size
 			lwSourceFiles.setVisible(true);
 		});
+
+		// Populate languages dropdown
+		for (Language l : Language.values()) {
+			ccbLanguages.getItems().add(l);
+		}
 
 		ccbLanguages.getCheckModel().getCheckedItems().addListener(new ListChangeListener<Language>() {
 			public void onChanged(ListChangeListener.Change<? extends Language> l) {
@@ -79,11 +87,7 @@ public class Controller implements Initializable {
 			}
 		});
 
-		for (Language l : Language.values()) {
-			ccbLanguages.getItems().add(l);
-		}
-
-		hbLogArea.managedProperty().bind(hbLogArea.visibleProperty());
+		hbLogArea.managedProperty().bind(hbLogArea.visibleProperty()); // controls size when visibility toggled
 	}
 
 	/**
@@ -94,14 +98,20 @@ public class Controller implements Initializable {
 	private void createReport() {
 		if (canGenerateReport()) {
 			if (dialogConfirmCompile()) { // user accepts
-				compileToPdf();
-				btnRun.setDisable(true);
-				new Popup("Document is ready", "Document has been compiled!", "Find it at " + txfTargetFile.getText(),
-						AlertType.INFORMATION).showAndWait();
+				try {
+					compileToPdf();
+					new Popup("Document is ready", "Document has been compiled!",
+							"Find it at " + txfResultFile.getText(), AlertType.INFORMATION).showAndWait();
+				} catch (Exception e) {
+					new Popup("Error", "I'm sorry but something went wrong:", e.toString(), AlertType.ERROR)
+							.showAndWait();
+				}
+
 			}
 		} else {
 			new Popup("Error", "Something prevents me from running", "Are all input fields green?\n"
-					+ "If yes, try to close and open again.\n" + "I sometimes behave weirdly.").showAndWait();
+					+ "If yes, try to close and open again.\n" + "I sometimes behave weirdly.", AlertType.ERROR)
+							.showAndWait();
 		}
 	}
 
@@ -145,7 +155,7 @@ public class Controller implements Initializable {
 		} catch (Exception e) {
 		}
 
-		txfTargetFile.setText(path);
+		txfResultFile.setText(path);
 	}
 
 	@FXML
@@ -161,12 +171,9 @@ public class Controller implements Initializable {
 	private boolean dialogConfirmCompile() {
 		boolean confirmation = false;
 
-		Alert alert = new Alert(AlertType.CONFIRMATION);
-		alert.setTitle("Ready to compile?");
-		alert.setHeaderText("Want to compile? Application might FREEZE!");
-		alert.setContentText("This is normal. Be patient with me.\n");
+		Optional<ButtonType> result = new Popup("Begin to compiling?", "Want to compile? Application might FREEZE!?",
+				"This is normal. Be patient with me.", AlertType.CONFIRMATION).showAndWait();
 
-		Optional<ButtonType> result = alert.showAndWait();
 		if (result.get() == ButtonType.OK) {
 			confirmation = true;
 		}
@@ -179,37 +186,44 @@ public class Controller implements Initializable {
 	 * Starts the chain of calls, thus beginning the compilation of the code. Also
 	 * updates the log area with "useful" information about the process.
 	 * precondition: source files must be sanitized first
-	 */
-	private void compileToPdf() {
-		ArrayList<String> files = new ArrayList<String>();
-		for (String file : lwSourceFiles.getItems()) {
-			files.add(file);
-		}
-		try {
-			LatexProcessor lp = new LatexProcessor(sanitizeString(txfTitle.getText()),
-					sanitizeString(txfAuthor.getText()), files, languagesSelected());
-			String exportFile = txfTargetFile.getText();
-			if (getFileExtension(exportFile).equals("")) {
-				exportFile = exportFile + ".pdf";
-			}
-			txaLog.setText(lp.compile(exportFile));
-		} catch (Exception e) {
-			new Popup("Error", "Something went wrong with the filesystem", e.toString()).showAndWait();
-		}
-
-	}
-
-	/**
-	 * Sanitizes string escaping unwanted TeX characters
 	 * 
-	 * @param s string to check
-	 * @return string with unwanted characters escaped
+	 * @throws Exception
 	 */
-	private String sanitizeString(String s) {
-		return s.replaceAll("\\\\", "\\\\textbackslash") // \
-				.replaceAll("([&%$#_{}])", "\\\\$1") // &%$#_{}
-				.replaceAll("~", "\\\\textasciitilde") // ~
-				.replaceAll("\\^", "\\\\textasciicircum"); // for ^
+	private void compileToPdf() throws Exception {
+		String log;
+		// Document data preparation
+		String title = Validator.sanitizeString(txfTitle.getText());
+		String author = Validator.sanitizeString(txfAuthor.getText());
+		List<String> files = new ArrayList<String>(lwSourceFiles.getItems());
+		// if no PDF file extension, then add
+		String resultFile = (getFileExtension(txfResultFile.getText()).equals("")) ? txfResultFile.getText() + ".pdf"
+				: txfResultFile.getText();
+
+		// Start process
+		// 1) write the TeX
+		LatexProcessor lp = null;
+		try {
+			lp = new LatexProcessor(title, author, files, languagesSelected());
+			lp.writeTexFiles();
+		} catch (Exception e) {
+			throw new Exception("Something went wrong with the filesystem");
+		}
+		// 2) compile TeX to PDF
+		Terminal term = null;
+		try {
+			if (System.getProperty("os.name").contains("Windows")) {
+				term = new TerminalWindows(lp.getTmpDir());
+			} else {
+				term = new TerminalUnix(lp.getTmpDir());
+			}
+
+			log = term.compileAndMove(resultFile);
+			txaLog.setText(log);
+		} catch (Exception e) {
+			throw new Exception(e.toString());
+		} finally {
+			term.deleteTmpDirectory();
+		}
 	}
 
 	/**
@@ -396,12 +410,12 @@ public class Controller implements Initializable {
 
 	private boolean checkTargetIsOK() {
 		boolean isValid = false;
-		String filePath = new File(txfTargetFile.getText()).getParentFile().getAbsolutePath();
+		String filePath = new File(txfResultFile.getText()).getParentFile().getAbsolutePath();
 		if (Validator.checkDirectoryIsOK(filePath)) {
 			isValid = true;
-			setSuccessState(txfTargetFile, "success");
+			setSuccessState(txfResultFile, "success");
 		} else {
-			setSuccessState(txfTargetFile, "error");
+			setSuccessState(txfResultFile, "error");
 		}
 		return isValid;
 	}

@@ -67,7 +67,7 @@
 			      		 <Glyph fontFamily="FontAwesome" icon="save" />
 			   		 </graphic>
                   </Button>
-                  <TextField fx:id="txfTargetFile" editable="false" promptText="..." HBox.hgrow="ALWAYS" />
+                  <TextField fx:id="txfResultFile" editable="false" promptText="..." HBox.hgrow="ALWAYS" />
                </children>
             </HBox>
             <HBox alignment="CENTER_LEFT" GridPane.rowIndex="3">

@@ -8,30 +8,33 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.List;
 
 import app.controller.Controller;
 
 public class LatexProcessor {
 	private String title;
 	private String author;
-	private ArrayList<String> files;
+	private List<String> files;
 	private ArrayList<Language> languages;
-	private String operatingSystem;
-	private String tmpDir;
+	private File tmpDir;
 
-	public LatexProcessor(String title, String author, ArrayList<String> files, ArrayList<Language> languages)
+	public LatexProcessor(String title, String author, List<String> files, ArrayList<Language> languages)
 			throws URISyntaxException {
 		this.title = title;
 		this.author = author;
 		this.files = files;
 		this.languages = languages;
-		operatingSystem = System.getProperty("os.name");
 
-		tmpDir = new File(LatexProcessor.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParent()
-				+ File.separator + "tmp" + File.separator;
-		File f = new File(tmpDir);
-		f.mkdir();
+		tmpDir = new File(
+				new File(LatexProcessor.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParent()
+						+ File.separator + "tmp" + File.separator);
+		tmpDir.mkdir();
 
+	}
+
+	public File getTmpDir() {
+		return tmpDir;
 	}
 
 	/**
@@ -94,7 +97,7 @@ public class LatexProcessor {
 	 * 
 	 * @throws FileNotFoundException
 	 */
-	private void writeTexFiles() throws Exception {
+	public void writeTexFiles() throws Exception {
 		// Template
 		try (PrintWriter writer = new PrintWriter(tmpDir + File.separator + "report.tex")) {
 			BufferedReader txtReader = new BufferedReader(
@@ -123,24 +126,4 @@ public class LatexProcessor {
 		}
 	}
 
-	/**
-	 * Starts the process: 1. Write the templates out 2. Compiles the TeX 3. Moves
-	 * the resulting PDF to target
-	 * 
-	 * @param pathTargetFile the location and name of the resulting file
-	 * @return the log from the compile process
-	 * @throws Exception to be caught in GUI
-	 */
-	public String compile(String pathTargetFile) throws Exception {
-		writeTexFiles();
-		Terminal term = null;
-
-		if (operatingSystem.contains("Windows")) {
-			term = new TerminalWindows(tmpDir);
-		} else {
-			term = new TerminalUnix(tmpDir);
-		}
-
-		return term.compileAndMove(pathTargetFile);
-	}
 }
