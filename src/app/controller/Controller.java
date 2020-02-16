@@ -98,10 +98,16 @@ public class Controller implements Initializable {
 	private void createReport() {
 		if (canGenerateReport()) {
 			if (dialogConfirmCompile()) { // user accepts
-				compileToPdf();
-				btnRun.setDisable(true);
-				new Popup("Document is ready", "Document has been compiled!", "Find it at " + txfResultFile.getText(),
-						AlertType.INFORMATION).showAndWait();
+				try {
+					compileToPdf();
+					btnRun.setDisable(true);
+					new Popup("Document is ready", "Document has been compiled!",
+							"Find it at " + txfResultFile.getText(), AlertType.INFORMATION).showAndWait();
+				} catch (Exception e) {
+					new Popup("Error", "I'm sorry but something went wrong:", e.toString(), AlertType.ERROR)
+							.showAndWait();
+				}
+
 			}
 		} else {
 			new Popup("Error", "Something prevents me from running", "Are all input fields green?\n"
@@ -181,8 +187,10 @@ public class Controller implements Initializable {
 	 * Starts the chain of calls, thus beginning the compilation of the code. Also
 	 * updates the log area with "useful" information about the process.
 	 * precondition: source files must be sanitized first
+	 * 
+	 * @throws Exception
 	 */
-	private void compileToPdf() {
+	private void compileToPdf() throws Exception {
 		String log;
 		// Document data preparation
 		String title = Validator.sanitizeString(txfTitle.getText());
@@ -199,7 +207,7 @@ public class Controller implements Initializable {
 			lp = new LatexProcessor(title, author, files, languagesSelected());
 			lp.writeTexFiles();
 		} catch (Exception e) {
-			new Popup("Error", "Something went wrong with the filesystem", e.toString(), AlertType.ERROR).showAndWait();
+			throw new Exception("Something went wrong with the filesystem");
 		}
 		// 2) compile TeX to PDF
 		Terminal term = null;
@@ -213,7 +221,7 @@ public class Controller implements Initializable {
 			log = term.compileAndMove(resultFile);
 			txaLog.setText(log);
 		} catch (Exception e) {
-			new Popup("Error", "Something went wrong. Can't compile: \n", e.toString(), AlertType.ERROR).showAndWait();
+			throw new Exception(e.toString());
 		} finally {
 			term.deleteTmpDirectory();
 		}

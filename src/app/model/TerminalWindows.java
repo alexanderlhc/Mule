@@ -8,6 +8,20 @@ public class TerminalWindows extends Terminal {
 		super(tmpDir);
 	}
 
+	/**
+	 * On Windows existing files aren't overwritten,
+	 * therefore manually deleting works around that.
+	 */
+	@Override
+	public void movePdfToDestination(String path) throws Exception {
+		File fDestination = new File(path);
+
+		if (fDestination.exists())
+			fDestination.delete();
+
+		super.movePdfToDestination(path);
+	}
+
 	@Override
 	public String getPdflatexPath(String tinyTexPath) {
 		return tinyTexPath + "win32" + File.separator + "latexmk.exe";
