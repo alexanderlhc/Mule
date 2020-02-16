@@ -1,6 +1,6 @@
 # README
 
-![Screenshot](https://i.imgur.com/BKcq0MB.png)
+![Screenshot](https://i.imgur.com/q8fzp6a.png)
 
 ## Guide
 
