@@ -100,7 +100,6 @@ public class Controller implements Initializable {
 			if (dialogConfirmCompile()) { // user accepts
 				try {
 					compileToPdf();
-					btnRun.setDisable(true);
 					new Popup("Document is ready", "Document has been compiled!",
 							"Find it at " + txfResultFile.getText(), AlertType.INFORMATION).showAndWait();
 				} catch (Exception e) {
