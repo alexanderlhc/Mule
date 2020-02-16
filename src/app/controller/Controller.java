@@ -12,6 +12,9 @@ import org.controlsfx.control.CheckComboBox;
 
 import app.model.Language;
 import app.model.LatexProcessor;
+import app.model.Terminal;
+import app.model.TerminalUnix;
+import app.model.TerminalWindows;
 import gui.Popup;
 import gui.Validator;
 import javafx.collections.ListChangeListener;
@@ -184,6 +187,7 @@ public class Controller implements Initializable {
 	 * precondition: source files must be sanitized first
 	 */
 	private void compileToPdf() {
+		String log;
 		// Document data preparation
 		String title = Validator.sanitizeString(txfTitle.getText());
 		String author = Validator.sanitizeString(txfAuthor.getText());
@@ -193,11 +197,29 @@ public class Controller implements Initializable {
 				: txfResultFile.getText();
 
 		// Start process
+		// 1) write the TeX
+		LatexProcessor lp = null;
 		try {
-			LatexProcessor lp = new LatexProcessor(title, author, files, languagesSelected());
-			txaLog.setText(lp.compile(resultFile));
+			lp = new LatexProcessor(title, author, files, languagesSelected());
+			lp.writeTexFiles();
 		} catch (Exception e) {
 			new Popup("Error", "Something went wrong with the filesystem", e.toString(), AlertType.ERROR).showAndWait();
+		}
+		// 2) compile TeX to PDF
+		Terminal term = null;
+		try {
+			if (System.getProperty("os.name").contains("Windows")) {
+				term = new TerminalWindows(lp.getTmpDir());
+			} else {
+				term = new TerminalUnix(lp.getTmpDir());
+			}
+
+			log = term.compileAndMove(resultFile);
+			txaLog.setText(log);
+		} catch (Exception e) {
+			new Popup("Error", "Something went wrong. Can't compile: \n", e.toString(), AlertType.ERROR).showAndWait();
+		} finally {
+			term.deleteTmpDirectory();
 		}
 	}
 

@@ -16,14 +16,25 @@ public abstract class Terminal {
 		this.tmpDir = tmpDir;
 		setPdflatexPath();
 
-		if (!pdflatexPath.canExecute()) {
+		if (!pdflatexPath.canExecute()) { // latexmk can run
 			new Popup("Error latexmk not found!", "TinyTex directory must be in same directory as this jar file.",
 					"download the zip again.", AlertType.ERROR).showAndWait();
 		}
 	}
 
+	/**
+	 * Gets the system depended path for latexmk
+	 * 
+	 * @param tinyTexPath
+	 * @return path to latexmk
+	 */
 	public abstract String getPdflatexPath(String tinyTexPath);
 
+	/**
+	 * Command called to initiate the compiler
+	 * 
+	 * @return array with each element being a parameter
+	 */
 	public abstract String[] getCommand();
 
 	/**
@@ -90,22 +101,27 @@ public abstract class Terminal {
 	}
 
 	/**
-	 * Deletes directory
+	 * Deletes the temporary directory
 	 * 
-	 * @param directory
 	 */
-	private void deleteDirectory(File directory) {
-		File[] listFiles = directory.listFiles();
+	public void deleteTmpDirectory() {
+		File[] listFiles = tmpDir.listFiles();
 		for (File f : listFiles) {
 			f.delete();
 		}
-		directory.delete();
+		tmpDir.delete();
 	}
 
-	public String compileAndMove(String path) throws Exception {
+	/**
+	 * Compiles the temporary files and moves the result to wanted location
+	 * 
+	 * @param target file, result of compile process
+	 * @return log from compiler
+	 * @throws Exception
+	 */
+	public String compileAndMove(String target) throws Exception {
 		String compiledLog = compileToPDF();
-		movePdfToDestination(path);
-		deleteDirectory(tmpDir);
+		movePdfToDestination(target);
 
 		return compiledLog + "\n\n Finished!";
 	}
