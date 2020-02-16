@@ -21,7 +21,6 @@ import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
@@ -167,12 +166,9 @@ public class Controller implements Initializable {
 	private boolean dialogConfirmCompile() {
 		boolean confirmation = false;
 
-		Alert alert = new Alert(AlertType.CONFIRMATION);
-		alert.setTitle("Ready to compile?");
-		alert.setHeaderText("Want to compile? Application might FREEZE!");
-		alert.setContentText("This is normal. Be patient with me.\n");
+		Optional<ButtonType> result = new Popup("Begin to compiling?", "Want to compile? Application might FREEZE!?",
+				"This is normal. Be patient with me.", AlertType.CONFIRMATION).showAndWait();
 
-		Optional<ButtonType> result = alert.showAndWait();
 		if (result.get() == ButtonType.OK) {
 			confirmation = true;
 		}
