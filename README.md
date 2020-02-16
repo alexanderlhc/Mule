@@ -14,12 +14,7 @@ Download the `Mule-[OS].zip` from [here](https://github.com/alexanderlhc/Mule/re
 
 ### Must 
 
-- [ ] More languages added + confirm color palette
-
-### Cleaner code
-
-- [ ] Paths are an absolute mess (tmpDir,WorkDir etc..), passed and reread without system now.
-- [ ] In Controller method "compileToPdf" it reads and sanitizes all files in selected directory again. Maybe just read from already sanitised ListView?
+- [ ] More languages + confirm color palette
 
 ### Nice to have
 
