@@ -4,6 +4,7 @@ import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -31,13 +32,13 @@ import javafx.stage.Stage;
 
 public class Controller implements Initializable {
 	@FXML
-	private TextField txfAuthor = new TextField();
+	private TextField txfAuthor;
 	@FXML
 	private TextField txfTitle;
 	@FXML
 	private TextField txfCodeDir;
 	@FXML
-	private TextField txfTargetFile;
+	private TextField txfResultFile;
 	@FXML
 	private ListView<String> lwSourceFiles;
 	@FXML
@@ -63,14 +64,19 @@ public class Controller implements Initializable {
 		txfTitle.textProperty().addListener((obs, oldText, newText) -> {
 			checkTitleIsOK();
 		});
-		txfTargetFile.textProperty().addListener((obs, oldText, newText) -> {
+		txfResultFile.textProperty().addListener((obs, oldText, newText) -> {
 			checkTargetIsOK();
 		});
 		txfCodeDir.textProperty().addListener((obs, oldText, newText) -> {
 			checkCodeDirIsOK();
-			lwSourceFiles.setManaged(true);
+			lwSourceFiles.setManaged(true); // pane adopts to its size
 			lwSourceFiles.setVisible(true);
 		});
+
+		// Populate languages dropdown
+		for (Language l : Language.values()) {
+			ccbLanguages.getItems().add(l);
+		}
 
 		ccbLanguages.getCheckModel().getCheckedItems().addListener(new ListChangeListener<Language>() {
 			public void onChanged(ListChangeListener.Change<? extends Language> l) {
@@ -79,11 +85,7 @@ public class Controller implements Initializable {
 			}
 		});
 
-		for (Language l : Language.values()) {
-			ccbLanguages.getItems().add(l);
-		}
-
-		hbLogArea.managedProperty().bind(hbLogArea.visibleProperty());
+		hbLogArea.managedProperty().bind(hbLogArea.visibleProperty()); // controls size when visibility toggled
 	}
 
 	/**
@@ -96,12 +98,13 @@ public class Controller implements Initializable {
 			if (dialogConfirmCompile()) { // user accepts
 				compileToPdf();
 				btnRun.setDisable(true);
-				new Popup("Document is ready", "Document has been compiled!", "Find it at " + txfTargetFile.getText(),
+				new Popup("Document is ready", "Document has been compiled!", "Find it at " + txfResultFile.getText(),
 						AlertType.INFORMATION).showAndWait();
 			}
 		} else {
 			new Popup("Error", "Something prevents me from running", "Are all input fields green?\n"
-					+ "If yes, try to close and open again.\n" + "I sometimes behave weirdly.").showAndWait();
+					+ "If yes, try to close and open again.\n" + "I sometimes behave weirdly.", AlertType.ERROR)
+							.showAndWait();
 		}
 	}
 
@@ -145,7 +148,7 @@ public class Controller implements Initializable {
 		} catch (Exception e) {
 		}
 
-		txfTargetFile.setText(path);
+		txfResultFile.setText(path);
 	}
 
 	@FXML
@@ -181,35 +184,21 @@ public class Controller implements Initializable {
 	 * precondition: source files must be sanitized first
 	 */
 	private void compileToPdf() {
-		ArrayList<String> files = new ArrayList<String>();
-		for (String file : lwSourceFiles.getItems()) {
-			files.add(file);
-		}
+		// Document data preparation
+		String title = Validator.sanitizeString(txfTitle.getText());
+		String author = Validator.sanitizeString(txfAuthor.getText());
+		List<String> files = new ArrayList<String>(lwSourceFiles.getItems());
+		// if no PDF file extension, then add
+		String resultFile = (getFileExtension(txfResultFile.getText()).equals("")) ? txfResultFile.getText() + ".pdf"
+				: txfResultFile.getText();
+
+		// Start process
 		try {
-			LatexProcessor lp = new LatexProcessor(sanitizeString(txfTitle.getText()),
-					sanitizeString(txfAuthor.getText()), files, languagesSelected());
-			String exportFile = txfTargetFile.getText();
-			if (getFileExtension(exportFile).equals("")) {
-				exportFile = exportFile + ".pdf";
-			}
-			txaLog.setText(lp.compile(exportFile));
+			LatexProcessor lp = new LatexProcessor(title, author, files, languagesSelected());
+			txaLog.setText(lp.compile(resultFile));
 		} catch (Exception e) {
-			new Popup("Error", "Something went wrong with the filesystem", e.toString()).showAndWait();
+			new Popup("Error", "Something went wrong with the filesystem", e.toString(), AlertType.ERROR).showAndWait();
 		}
-
-	}
-
-	/**
-	 * Sanitizes string escaping unwanted TeX characters
-	 * 
-	 * @param s string to check
-	 * @return string with unwanted characters escaped
-	 */
-	private String sanitizeString(String s) {
-		return s.replaceAll("\\\\", "\\\\textbackslash") // \
-				.replaceAll("([&%$#_{}])", "\\\\$1") // &%$#_{}
-				.replaceAll("~", "\\\\textasciitilde") // ~
-				.replaceAll("\\^", "\\\\textasciicircum"); // for ^
 	}
 
 	/**
@@ -396,12 +385,12 @@ public class Controller implements Initializable {
 
 	private boolean checkTargetIsOK() {
 		boolean isValid = false;
-		String filePath = new File(txfTargetFile.getText()).getParentFile().getAbsolutePath();
+		String filePath = new File(txfResultFile.getText()).getParentFile().getAbsolutePath();
 		if (Validator.checkDirectoryIsOK(filePath)) {
 			isValid = true;
-			setSuccessState(txfTargetFile, "success");
+			setSuccessState(txfResultFile, "success");
 		} else {
-			setSuccessState(txfTargetFile, "error");
+			setSuccessState(txfResultFile, "error");
 		}
 		return isValid;
 	}

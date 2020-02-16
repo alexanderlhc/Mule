@@ -8,18 +8,19 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.List;
 
 import app.controller.Controller;
 
 public class LatexProcessor {
 	private String title;
 	private String author;
-	private ArrayList<String> files;
+	private List<String> files;
 	private ArrayList<Language> languages;
 	private String operatingSystem;
-	private String tmpDir;
+	private File tmpDir;
 
-	public LatexProcessor(String title, String author, ArrayList<String> files, ArrayList<Language> languages)
+	public LatexProcessor(String title, String author, List<String> files, ArrayList<Language> languages)
 			throws URISyntaxException {
 		this.title = title;
 		this.author = author;
@@ -27,10 +28,10 @@ public class LatexProcessor {
 		this.languages = languages;
 		operatingSystem = System.getProperty("os.name");
 
-		tmpDir = new File(LatexProcessor.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParent()
-				+ File.separator + "tmp" + File.separator;
-		File f = new File(tmpDir);
-		f.mkdir();
+		tmpDir = new File(
+				new File(LatexProcessor.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParent()
+						+ File.separator + "tmp" + File.separator);
+		tmpDir.mkdir();
 
 	}
 
