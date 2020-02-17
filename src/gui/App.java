@@ -4,7 +4,6 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
 
 public class App extends Application {
@@ -20,18 +19,7 @@ public class App extends Application {
 		Parent content = loader.load();
 		Scene scene = new Scene(content);
 		primaryStage.setScene(scene);
-		useageInformation();
 		primaryStage.show();
 	}
 
-	/**
-	 * Dialog showing current state of the application (the limits).
-	 * Hopefully unnecessary soon.
-	 */
-	private void useageInformation() {
-		new Popup(
-				"Mule known limitations!", "Limitations:", String.format("* %s%n* %s",
-						"Must open and close for consecutive runs", "App might freeze while making the PDF"),
-				AlertType.INFORMATION).showAndWait();
-	}
 }
