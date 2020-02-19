@@ -9,7 +9,7 @@ public enum Language {
 	C("C", new ArrayList<String>(Arrays.asList("c", "h"))), SQL("SQL", new ArrayList<String>(Arrays.asList("sql"))),
 	CPP("C++", new ArrayList<String>(Arrays.asList("C", "cc", "cpp", "cxx", "c++", "h", "hh", "hpp", "hxx", "h++"))),
 	PYTHON("Python", new ArrayList<String>(Arrays.asList("py"))),
-	JAVASCRIPT("Javscript", new ArrayList<String>(Arrays.asList("js")));
+	JAVASCRIPT("Javascript", new ArrayList<String>(Arrays.asList("js")));
 
 	private Language(String latexString, ArrayList<String> filetypes) {
 		this.latexString = latexString;
