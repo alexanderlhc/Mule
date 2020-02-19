@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
+import javafx.scene.control.*;
 import org.controlsfx.control.CheckComboBox;
 
 import app.model.Language;
@@ -22,11 +23,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
@@ -51,6 +47,8 @@ public class Controller implements Initializable {
 	private Button btnRun;
 	@FXML
 	private HBox hbLogArea;
+	@FXML
+	private CheckBox cbAddChapters;
 
 	/**
 	 * Initializes the listeners used for live validation
@@ -195,6 +193,7 @@ public class Controller implements Initializable {
 		String title = Validator.sanitizeString(txfTitle.getText());
 		String author = Validator.sanitizeString(txfAuthor.getText());
 		List<String> files = new ArrayList<String>(lwSourceFiles.getItems());
+		boolean addChapters = cbAddChapters.isSelected();
 		// if no PDF file extension, then add
 		String resultFile = (getFileExtension(txfResultFile.getText()).equals("")) ? txfResultFile.getText() + ".pdf"
 				: txfResultFile.getText();
@@ -203,7 +202,7 @@ public class Controller implements Initializable {
 		// 1) write the TeX
 		LatexProcessor lp = null;
 		try {
-			lp = new LatexProcessor(title, author, files, languagesSelected());
+			lp = new LatexProcessor(title, author, files, languagesSelected(), addChapters);
 			lp.writeTexFiles();
 		} catch (Exception e) {
 			throw new Exception("Something went wrong with the filesystem");
@@ -349,7 +348,7 @@ public class Controller implements Initializable {
 	 * (error,success) and setting new
 	 * 
 	 * @param node to update
-	 * @param css  class style
+	 * @param string css  class style
 	 */
 	private void setSuccessState(Node n, String newStyle) {
 		n.getStyleClass().removeAll("success", "error");

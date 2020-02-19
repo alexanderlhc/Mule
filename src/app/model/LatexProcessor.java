@@ -18,13 +18,15 @@ public class LatexProcessor {
 	private List<String> files;
 	private ArrayList<Language> languages;
 	private File tmpDir;
+	private boolean addChapters;
 
-	public LatexProcessor(String title, String author, List<String> files, ArrayList<Language> languages)
+	public LatexProcessor(String title, String author, List<String> files, ArrayList<Language> languages, boolean addChapters)
 			throws URISyntaxException {
 		this.title = title;
 		this.author = author;
 		this.files = files;
 		this.languages = languages;
+		this.addChapters = addChapters;
 
 		tmpDir = new File(
 				new File(LatexProcessor.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParent()
@@ -45,7 +47,7 @@ public class LatexProcessor {
 	private String latexForAllLanguages() {
 		StringBuilder sb = new StringBuilder();
 		for (Language language : languages) {
-			sb.append(latexFromCodeSection(language));
+			sb.append(latexFromCodeSection(language, addChapters));
 		}
 		return sb.toString();
 	}
@@ -58,9 +60,10 @@ public class LatexProcessor {
 	 * @param language that will be highlighted
 	 * @return string formatted for LaTeX
 	 */
-	private String latexFromCodeSection(Language language) {
+	private String latexFromCodeSection(Language language, boolean isChapter) {
 		StringBuilder sb = new StringBuilder();
-		sb.append(String.format("\\chapter{%s}%n", language.getLatexString()));
+		if(isChapter)
+			sb.append(String.format("\\chapter{%s}%n", language.getLatexString()));
 		sb.append("\\newpage\n");
 
 		for (String path : files) {
