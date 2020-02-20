@@ -1,11 +1,13 @@
 \documentclass{report}
 \usepackage[T1]{fontenc}							% unicode
-\usepackage[utf8]{inputenc}							% correct typeset
+\usepackage[utf8,latin1]{inputenc}
 \usepackage[english]{babel}
- \usepackage[paper=a4paper,margin=3.0cm]{geometry}   % margins
+\usepackage[paper=a4paper,margin=3.0cm]{geometry}   % margins
 \usepackage{fancyhdr}                               % header
 \usepackage{lastpage}                               % last page
 \usepackage[ddmmyyyy]{datetime}                     % date
+\usepackage[final]{pdfpages}
+\usepackage{grffile}                                % allows space in includes
 
 %%% styles
 \usepackage{titlesec}
@@ -76,17 +78,15 @@ literate=
 %%%%% title
 % set through properties.tex (controlled by java)
 \date{ \today }
-
 \input{../tmp/properties}
-
 \begin{document}
-
+\input{../tmp/prepends}
 \maketitle
 \tableofcontents
 \newpage
-
 \newgeometry{top=3cm,bottom=2cm,right=0.5cm,left=1cm}
 \UseRawInputEncoding
 \input{../tmp/code}
+\input{../tmp/appends}
 
 \end{document}

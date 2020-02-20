@@ -1,13 +1,13 @@
 package app.controller;
 
 import java.io.File;
+import java.lang.reflect.Array;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
+import javafx.event.ActionEvent;
+import javafx.scene.control.*;
 import org.controlsfx.control.CheckComboBox;
 
 import app.model.Language;
@@ -22,17 +22,13 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 public class Controller implements Initializable {
+
 	@FXML
 	private TextField txfAuthor;
 	@FXML
@@ -51,6 +47,14 @@ public class Controller implements Initializable {
 	private Button btnRun;
 	@FXML
 	private HBox hbLogArea;
+	@FXML
+	private CheckBox cbAddChapters;
+	@FXML
+	private ToggleGroup tgPrependAppend;
+	@FXML
+	private RadioButton rbPrepend;
+
+	private TreeMap<String, Boolean> extraFiles = new TreeMap<>(); // path, append or prepend
 
 	/**
 	 * Initializes the listeners used for live validation
@@ -88,6 +92,8 @@ public class Controller implements Initializable {
 		});
 
 		hbLogArea.managedProperty().bind(hbLogArea.visibleProperty()); // controls size when visibility toggled
+
+		rbPrepend.setSelected(true); // group must have at least one selected
 	}
 
 	/**
@@ -159,6 +165,26 @@ public class Controller implements Initializable {
 	}
 
 	@FXML
+	private void chooseExtraFile() {
+		String path = "";
+		try {
+			FileChooser fileChooser = new FileChooser();
+			FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("PDF", "*.pdf");
+			fileChooser.getExtensionFilters().add(extFilter);
+			path = fileChooser.showOpenDialog(new Stage()).getAbsolutePath();
+
+			if (path.equals(""))
+				throw new Exception("No file chosen");
+
+
+			extraFiles.put(path, rbPrepend.isSelected());
+			setLwSourceFiles(txfCodeDir.getText());
+		} catch (Exception e) {
+		}
+
+	}
+
+	@FXML
 	private void logAreaToggle() {
 		hbLogArea.setVisible(!hbLogArea.isVisible());
 	}
@@ -194,7 +220,8 @@ public class Controller implements Initializable {
 		// Document data preparation
 		String title = Validator.sanitizeString(txfTitle.getText());
 		String author = Validator.sanitizeString(txfAuthor.getText());
-		List<String> files = new ArrayList<String>(lwSourceFiles.getItems());
+		List<String> files = new ArrayList<>(removeUnwantedFiles(getSrcFilesPaths(txfCodeDir.getText()), getFiletypes()));
+		boolean addChapters = cbAddChapters.isSelected();
 		// if no PDF file extension, then add
 		String resultFile = (getFileExtension(txfResultFile.getText()).equals("")) ? txfResultFile.getText() + ".pdf"
 				: txfResultFile.getText();
@@ -203,7 +230,7 @@ public class Controller implements Initializable {
 		// 1) write the TeX
 		LatexProcessor lp = null;
 		try {
-			lp = new LatexProcessor(title, author, files, languagesSelected());
+			lp = new LatexProcessor(title, author, files, languagesSelected(), extraFiles, addChapters);
 			lp.writeTexFiles();
 		} catch (Exception e) {
 			throw new Exception("Something went wrong with the filesystem");
@@ -248,6 +275,7 @@ public class Controller implements Initializable {
 	private void setLwSourceFiles(String path) {
 		lwSourceFiles.setVisible(true);
 		ArrayList<String> files = removeUnwantedFiles(getSrcFilesPaths(path), getFiletypes());
+		files.addAll(extraFiles.keySet());
 		lwSourceFiles.getItems().setAll(files);
 	}
 
@@ -348,8 +376,8 @@ public class Controller implements Initializable {
 	 * Clears style for Node and applying new. Useful for clearing status
 	 * (error,success) and setting new
 	 * 
-	 * @param node to update
-	 * @param css  class style
+	 * @param n to update
+	 * @param newStyle (css) class style
 	 */
 	private void setSuccessState(Node n, String newStyle) {
 		n.getStyleClass().removeAll("success", "error");
@@ -435,5 +463,6 @@ public class Controller implements Initializable {
 		}
 		return isValid;
 	}
+
 
 }
