@@ -65,16 +65,16 @@ public class LatexProcessor {
 	private String latexFromCodeSection(Language language, boolean isChapter) {
 		StringBuilder sb = new StringBuilder();
 		if(isChapter)
-			sb.append(String.format("\\chapter{%s}%n", language.getLatexString()));
+			sb.append(String.format("\\chapter{%s}", language.getLatexString()));
 		sb.append("\\newpage\n");
 
 		for (String path : files) {
 			File f = new File(path);
 			String filetype = Controller.getFileExtension(f.getName());
 			if (language.getFiletypes().contains(filetype)) {
-				sb.append(String.format("\\section{%s}%n", f.getName()));
+				sb.append(String.format("\\section{%s}", f.getName()));
 				path = path.replaceAll("\\\\", "/");
-				sb.append(String.format("\\lstinputlisting[language={%s}]{\"%s\"}%n", language.getLatexString(), path));
+				sb.append(String.format("\\lstinputlisting[language={%s}]{\"%s\"}", language.getLatexString(), path));
 				sb.append("\\newpage\n");
 			}
 		}
@@ -90,10 +90,8 @@ public class LatexProcessor {
 	 * @return string formatted for LaTeX
 	 */
 	private String latexFromReportProperties() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(String.format("\\title{%s}%n", title));
-		sb.append(String.format("\\author{%s}%n", author));
-		return sb.toString();
+		return String.format("\\title{%s}", title) +
+				String.format("\\author{%s}", author);
 	}
 
 	/**
