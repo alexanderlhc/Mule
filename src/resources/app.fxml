@@ -16,6 +16,9 @@
 <?import org.controlsfx.glyphfont.*?>
 <?import org.controlsfx.control.CheckComboBox?>
 
+
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ToggleGroup?>
 <BorderPane maxHeight="900" maxWidth="-Infinity" minHeight="750" minWidth="-Infinity" stylesheets="@app.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.controller.Controller">
    <top>
       <HBox fx:id="header" prefHeight="125.0" BorderPane.alignment="CENTER">
@@ -36,6 +39,7 @@
             <RowConstraints maxHeight="50.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="75.0" minHeight="75.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="50.0" minHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="50.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints vgrow="SOMETIMES" />
             <RowConstraints maxHeight="300.0" minHeight="150.0" prefHeight="300.0" vgrow="SOMETIMES" />
          </rowConstraints>
@@ -78,7 +82,7 @@
             </HBox>
             <HBox alignment="CENTER_LEFT" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
                <CheckComboBox fx:id="ccbLanguages" prefHeight="25.0" prefWidth="192.0" />
-               <CheckBox mnemonicParsing="false" fx:id="cbAddChapters" text="as chapter(s)" />
+               <CheckBox fx:id="cbAddChapters" mnemonicParsing="false" text="as chapter(s)" />
             </HBox>
 
             <HBox alignment="CENTER_LEFT" GridPane.rowIndex="4">
@@ -96,8 +100,37 @@
                   <TextField fx:id="txfCodeDir" editable="false" promptText="..." HBox.hgrow="ALWAYS" />
                </children>
             </HBox>
-			<ListView fx:id="lwSourceFiles" prefHeight="500.0" prefWidth="540.0" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-            <VBox GridPane.columnSpan="2" GridPane.rowIndex="6">
+
+            <HBox alignment="CENTER_LEFT" GridPane.rowIndex="5">
+               <children>
+                  <Label text="Merge with PDF: " />
+               </children>
+            </HBox>
+            <HBox spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
+               <children>
+                  <Button mnemonicParsing="false" onAction="#chooseExtraFile" text="find file (PDF)">
+                     <graphic>
+                        <Glyph fontFamily="FontAwesome" icon="FOLDER_OPEN" />
+                     </graphic>
+                  </Button>
+                  <fx:define>
+                     <ToggleGroup fx:id="tgPrependAppend" />
+                  </fx:define>
+                  <RadioButton fx:id="rbPrepend" text="Prepend" toggleGroup="$tgPrependAppend">
+                     <HBox.margin>
+                        <Insets right="3.0"/>
+                     </HBox.margin>
+                  </RadioButton>
+                  <RadioButton fx:id="rbAppend" text="Append" toggleGroup="$tgPrependAppend">
+                     <HBox.margin>
+                        <Insets right="30.0" bottom="10.0"/>
+                     </HBox.margin>
+                  </RadioButton>
+               </children>
+            </HBox>
+
+			<ListView fx:id="lwSourceFiles" prefHeight="500.0" prefWidth="540.0" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+            <VBox GridPane.columnSpan="2" GridPane.rowIndex="7">
                <children>
                   <HBox alignment="CENTER_LEFT">
                      <children>

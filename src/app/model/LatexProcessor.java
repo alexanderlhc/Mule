@@ -7,10 +7,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import app.controller.Controller;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 
 public class LatexProcessor {
 	private String title;
@@ -19,14 +19,16 @@ public class LatexProcessor {
 	private ArrayList<Language> languages;
 	private File tmpDir;
 	private boolean addChapters;
+	private TreeMap<String, Boolean> extraFiles; // path, append or prepend
 
-	public LatexProcessor(String title, String author, List<String> files, ArrayList<Language> languages, boolean addChapters)
+	public LatexProcessor(String title, String author, List<String> files, ArrayList<Language> languages, TreeMap<String, Boolean> extraFiles, boolean addChapters)
 			throws URISyntaxException {
 		this.title = title;
 		this.author = author;
 		this.files = files;
 		this.languages = languages;
 		this.addChapters = addChapters;
+		this.extraFiles = extraFiles;
 
 		tmpDir = new File(
 				new File(LatexProcessor.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParent()
@@ -113,6 +115,23 @@ public class LatexProcessor {
 			throw new Exception("Can't write to the temporary report.tex file.");
 		}
 
+		// For each file wanted prepended
+			try (PrintWriter writerPrepends = new PrintWriter(tmpDir + File.separator + "prepends.tex"); PrintWriter writerAppends = new PrintWriter(tmpDir + File.separator + "appends.tex");) {
+				for (Map.Entry<String, Boolean> file : extraFiles.entrySet()) {
+
+					String path = file.getKey().replaceAll("\\\\", "/");
+					String extraFile = String.format("\\includepdf[pages=-]{%s}%n\\newpage", path);
+					if (file.getValue()) {
+						writerPrepends.write(extraFile);
+					} else {
+						writerAppends.write(extraFile);
+					}
+				}
+			} catch (IOException e) {
+				throw new Exception("Can't write to the temporary report.tex file.");
+			}
+
+
 		// Document properties
 		try (PrintWriter writer = new PrintWriter(tmpDir + File.separator + "properties.tex")) {
 			writer.write(latexFromReportProperties());
@@ -120,6 +139,7 @@ public class LatexProcessor {
 		} catch (IOException e) {
 			throw new Exception("Can't write to the temporary report.tex file.");
 		}
+
 
 		// Code
 		try (PrintWriter writer = new PrintWriter(tmpDir + File.separator + "code.tex")) {
