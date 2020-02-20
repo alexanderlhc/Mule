@@ -4,7 +4,7 @@
 
 ## Guide
 
-Download the `Mule-[OS].zip` from [here](https://github.com/alexanderlhc/Mule/releases/tag/aves.corvidae)
+Download the `Mule-[OS].zip` from [here](https://github.com/alexanderlhc/Mule/releases/tag/aves.opisthocomidae)
 
 * Extract zip
 * Run `Mule.jar` (NOTE the `TinyTeX` directory must be next to `Mule.jar`
