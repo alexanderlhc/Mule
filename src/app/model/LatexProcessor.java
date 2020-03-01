@@ -10,7 +10,6 @@ import java.net.URISyntaxException;
 import java.util.*;
 
 import app.controller.Controller;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 
 public class LatexProcessor {
 	private String title;
@@ -58,8 +57,8 @@ public class LatexProcessor {
 	 * Returns string with all files separated on individual pages formatted for
 	 * LaTeX to compile.
 	 * 
-	 * @param files    to be included in the section
 	 * @param language that will be highlighted
+     * @param isChapter whether to include it as a chapter
 	 * @return string formatted for LaTeX
 	 */
 	private String latexFromCodeSection(Language language, boolean isChapter) {
@@ -85,8 +84,6 @@ public class LatexProcessor {
 	/**
 	 * Returns string with title and author formatted for LaTeX to compile.
 	 * 
-	 * @param title     of the document
-	 * @param author(s) of the document
 	 * @return string formatted for LaTeX
 	 */
 	private String latexFromReportProperties() {
